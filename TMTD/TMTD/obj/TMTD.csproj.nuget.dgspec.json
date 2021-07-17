@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Dario\\Desktop\\IPJ\\Proectos propios\\TMTD\\TMTD\\TMTD.csproj": {}
+    "C:\\Users\\Dario\\Desktop\\IPJ\\Repos\\TMTD\\TMTD\\TMTD\\TMTD.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Dario\\Desktop\\IPJ\\Proectos propios\\TMTD\\TMTD\\TMTD.csproj": {
+    "C:\\Users\\Dario\\Desktop\\IPJ\\Repos\\TMTD\\TMTD\\TMTD\\TMTD.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Dario\\Desktop\\IPJ\\Proectos propios\\TMTD\\TMTD\\TMTD.csproj",
+        "projectUniqueName": "C:\\Users\\Dario\\Desktop\\IPJ\\Repos\\TMTD\\TMTD\\TMTD\\TMTD.csproj",
         "projectName": "TMTD",
-        "projectPath": "C:\\Users\\Dario\\Desktop\\IPJ\\Proectos propios\\TMTD\\TMTD\\TMTD.csproj",
+        "projectPath": "C:\\Users\\Dario\\Desktop\\IPJ\\Repos\\TMTD\\TMTD\\TMTD\\TMTD.csproj",
         "packagesPath": "C:\\Users\\Dario\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Dario\\Desktop\\IPJ\\Proectos propios\\TMTD\\TMTD\\obj\\",
+        "outputPath": "C:\\Users\\Dario\\Desktop\\IPJ\\Repos\\TMTD\\TMTD\\TMTD\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -43,6 +43,16 @@
       "frameworks": {
         "net5.0": {
           "targetAlias": "net5.0",
+          "dependencies": {
+            "SFML.Net": {
+              "target": "Package",
+              "version": "[2.5.0, )"
+            },
+            "SpreadsheetLight": {
+              "target": "Package",
+              "version": "[3.5.0, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",

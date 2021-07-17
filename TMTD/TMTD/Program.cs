@@ -6,7 +6,12 @@ namespace TMTD
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            Game game = new Game();
+            while (game.UpdateGameWindow())
+            {
+                game.UpdateGame();
+                game.DrawGame();
+            }
         }
     }
 }

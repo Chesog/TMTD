@@ -1,8 +1,21 @@
 {
   "version": 2,
-  "dgSpecHash": "K3Ax+WkZrqDRAGyK1LKPYAozUJ1iTGbC1lw4RXlg9ITrjTLOARHdKIcz8yBvOROG1YFFaf0uq20rFFGW+cB5zw==",
+  "dgSpecHash": "Elb2/Le+mpCftLNjBTXE4SFmCtjVOWbmv/nCyun6+V8oaA1IQbKgpmzZsE1d7ivlSVm8kTWw+FRvKnyGQGyIUw==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Dario\\Desktop\\IPJ\\Proectos propios\\TMTD\\TMTD\\TMTD.csproj",
-  "expectedPackageFiles": [],
+  "projectFilePath": "C:\\Users\\Dario\\Desktop\\IPJ\\Repos\\TMTD\\TMTD\\TMTD\\TMTD.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Dario\\.nuget\\packages\\csfml\\2.5.0\\csfml.2.5.0.nupkg.sha512",
+    "C:\\Users\\Dario\\.nuget\\packages\\documentformat.openxml\\2.11.3\\documentformat.openxml.2.11.3.nupkg.sha512",
+    "C:\\Users\\Dario\\.nuget\\packages\\microsoft.netcore.platforms\\5.0.0\\microsoft.netcore.platforms.5.0.0.nupkg.sha512",
+    "C:\\Users\\Dario\\.nuget\\packages\\microsoft.win32.systemevents\\5.0.0\\microsoft.win32.systemevents.5.0.0.nupkg.sha512",
+    "C:\\Users\\Dario\\.nuget\\packages\\sfml.audio\\2.5.0\\sfml.audio.2.5.0.nupkg.sha512",
+    "C:\\Users\\Dario\\.nuget\\packages\\sfml.graphics\\2.5.0\\sfml.graphics.2.5.0.nupkg.sha512",
+    "C:\\Users\\Dario\\.nuget\\packages\\sfml.net\\2.5.0\\sfml.net.2.5.0.nupkg.sha512",
+    "C:\\Users\\Dario\\.nuget\\packages\\sfml.system\\2.5.0\\sfml.system.2.5.0.nupkg.sha512",
+    "C:\\Users\\Dario\\.nuget\\packages\\sfml.window\\2.5.0\\sfml.window.2.5.0.nupkg.sha512",
+    "C:\\Users\\Dario\\.nuget\\packages\\spreadsheetlight\\3.5.0\\spreadsheetlight.3.5.0.nupkg.sha512",
+    "C:\\Users\\Dario\\.nuget\\packages\\system.drawing.common\\5.0.0\\system.drawing.common.5.0.0.nupkg.sha512",
+    "C:\\Users\\Dario\\.nuget\\packages\\system.io.packaging\\4.7.0\\system.io.packaging.4.7.0.nupkg.sha512"
+  ],
   "logs": []
 }
