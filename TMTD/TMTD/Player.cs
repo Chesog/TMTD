@@ -18,6 +18,14 @@ namespace TMTD
         public List<Bullet> bullets;
         private float Timer;
         private float RateOfFire;
+        private string Name;
+        private int MaxLife;
+        private int Life;
+        private int MaxMana;
+        private int Mana;
+        private int MinAtkk;
+        private int MaxAttk;
+        private Locations location;
         public Player()
         {
             bullets = new List<Bullet>();
@@ -29,7 +37,43 @@ namespace TMTD
             speed = 250.0f;
             RateOfFire = 1.0f;
         }
-        public void Update()
+        public Player(string Name , int MaxLife , int MaxMana ,  int MinAttk , int MaxAttk , Locations spawnpoint) 
+        {
+            this.Name = Name;
+            this.MaxLife = MaxLife;
+            this.Life = MaxLife;
+            this.MaxMana = MaxMana;
+            this.MinAtkk = MinAttk;
+            this.MaxAttk = MaxAttk;
+            this.Mana = MaxMana;
+
+            location = spawnpoint;
+        }
+        public void HealPlayer() 
+        {
+            Life = MaxLife;
+        }
+        public void HealPlayer(int Amount) 
+        {
+            Life += Amount;
+            if (Life > MaxLife)
+            {
+                Life = MaxLife;
+            }
+        }
+        public void RestoreMana() 
+        {
+            Mana = MaxMana;
+        }
+        public void RestoreMana(int Amount)
+        {
+            Mana += Amount;
+            if (Mana > MaxMana)
+            {
+                Mana = MaxMana;
+            }
+        }
+        public void UpdatePlayer()
         {
             if (Keyboard.IsKeyPressed(Keyboard.Key.D))
             {
@@ -73,7 +117,31 @@ namespace TMTD
                 DeletBullet.Clear();
             }
         }
-        public void Draw(RenderWindow window)
+        public Locations GetLocations() 
+        {
+            return location;
+        }
+        public void GoToShop() 
+        {
+            location = Locations.Shop;
+        }
+        public void GoToVillage()
+        {
+            location = Locations.Village;
+        }
+        public void GoToForest()
+        {
+            location = Locations.Forest;
+        }
+        public void GoToHome()
+        {
+            location = Locations.Home;
+        }
+        public void GoToCastle()
+        {
+            location = Locations.Castle;
+        }
+        public void DrawPlayer(RenderWindow window)
         {
             window.Draw(sprite);
             for (int i = 0; i < bullets.Count; i++)
@@ -84,6 +152,7 @@ namespace TMTD
                 }
             }
         }
+        public void RestPlayer() { }
     }
 }
-}
+

@@ -1,12 +1,1 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TMTD
-{
-    class Locations
-    {
-    }
-}
+﻿public enum Locations {Village , Castle , Forest , Home , Shop , Error}
