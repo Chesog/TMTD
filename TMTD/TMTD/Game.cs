@@ -12,8 +12,10 @@ namespace TMTD
         private RenderWindow window;
         public static readonly uint FRAMERATE_LIMIT = 60;
         Gameplay gameplay = new Gameplay();
+        MenuPrincipal menu = new MenuPrincipal();   
         public Game() 
         {
+            
             VideoMode videoMode = new VideoMode();
             videoMode.Width = 800;
             videoMode.Height = 600;
