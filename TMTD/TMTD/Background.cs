@@ -14,10 +14,14 @@ namespace TMTD
         private Texture texture;
         private Sprite sprite;
         private Player player;
-        private Background background;
+        private Locations CurrenLocation;
         public Background()
         {
-
+            
+        }
+        public Background(Player player) 
+        {
+            CurrenLocation = player.GetLocations();
         }
         public void UpdateBackground()
         {
@@ -25,22 +29,22 @@ namespace TMTD
         }
         public void DrawBackground(RenderWindow window)
         {
-            switch (player.GetLocations())
+            switch (CurrenLocation)
             {
                 case Locations.Village:
-                    background.DrawBacgroundVillage(window);
+                    DrawBacgroundVillage(window);
                     break;
                 case Locations.Castle:
-                    background.DarwBackgroundCastle(window);
+                    DarwBackgroundCastle(window);
                     break;
                 case Locations.Forest:
-                    background.DrawBackgroundForest(window);
+                    DrawBackgroundForest(window);
                     break;
                 case Locations.Home:
-                    background.DrawBackgroundHome(window);
+                    DrawBackgroundHome(window);
                     break;
                 case Locations.Shop:
-                    background.DrawBacgroundShop(window);
+                    DrawBacgroundShop(window);
                     break;
                 default:
                     Console.WriteLine("Error");
@@ -49,7 +53,7 @@ namespace TMTD
         }
         private void DrawBackgroundHome(RenderWindow window)
         {
-            texture = new Texture("");
+            texture = new Texture("Background/Sprites/Home/Home.jpg");
             sprite = new Sprite(texture);
             sprite.Scale = new Vector2f(2.9f, 3.5f);
             window.Draw(sprite);

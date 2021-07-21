@@ -11,14 +11,15 @@ namespace TMTD
     {
         private RenderWindow window;
         public static readonly uint FRAMERATE_LIMIT = 60;
-        Gameplay gameplay = new Gameplay();
-        MenuPrincipal menu = new MenuPrincipal();   
+        Gameplay gameplay;
+        MenuPrincipal menu;   
         public Game() 
         {
-            
+            gameplay = new Gameplay();
+            menu = new MenuPrincipal();
             VideoMode videoMode = new VideoMode();
-            videoMode.Width = 800;
-            videoMode.Height = 600;
+            videoMode.Width = 1600;
+            videoMode.Height = 900;
             window = new RenderWindow(videoMode, "The Mark Of The Deamned");
             window.Closed += CloseWindow;
             window.SetFramerateLimit(FRAMERATE_LIMIT);

@@ -14,7 +14,8 @@ namespace TMTD
         private Background background;
         public Gameplay() 
         {
-
+            player = new Player("Max",1000,100,0,100, Locations.Home);
+            background = new Background(player);
         }
         public void UpdateGameplay() 
         {

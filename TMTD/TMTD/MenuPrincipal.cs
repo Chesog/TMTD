@@ -13,8 +13,8 @@ namespace TMTD
     {
         private string[] Lines;
         private int ResAnswer;
-        private int Width;
-        private int Height;
+        private uint Width;
+        private uint Height;
         public  MenuPrincipal () 
         {
           
@@ -38,64 +38,64 @@ namespace TMTD
             switch (ResAnswer)
             {
                 case 0:
-                    Width = Convert.ToInt32(Lines[0]);
-                    Height = Convert.ToInt32(Lines[1]);
+                    Width = Convert.ToUInt32(Lines[0]);
+                    Height = Convert.ToUInt32(Lines[1]);
                     break;
                 case 1:
-                    Width = Convert.ToInt32(Lines[2]);
-                    Height = Convert.ToInt32(Lines[3]);
+                    Width = Convert.ToUInt32(Lines[2]);
+                    Height = Convert.ToUInt32(Lines[3]);
                     break;
                 case 2:
-                    Width = Convert.ToInt32(Lines[4]);
-                    Height = Convert.ToInt32(Lines[5]);
+                    Width = Convert.ToUInt32(Lines[4]);
+                    Height = Convert.ToUInt32(Lines[5]);
                     break;
                 case 3:
-                    Width = Convert.ToInt32(Lines[6]);
-                    Height = Convert.ToInt32(Lines[7]);
+                    Width = Convert.ToUInt32(Lines[6]);
+                    Height = Convert.ToUInt32(Lines[7]);
                     break;
                 case 4:
-                    Width = Convert.ToInt32(Lines[8]);
-                    Height = Convert.ToInt32(Lines[9]);
+                    Width = Convert.ToUInt32(Lines[8]);
+                    Height = Convert.ToUInt32(Lines[9]);
                     break;
                 case 5:
-                    Width = Convert.ToInt32(Lines[10]);
-                    Height = Convert.ToInt32(Lines[11]);
+                    Width = Convert.ToUInt32(Lines[10]);
+                    Height = Convert.ToUInt32(Lines[11]);
                     break;
                 case 6:
-                    Width = Convert.ToInt32(Lines[12]);
-                    Height = Convert.ToInt32(Lines[13]);
+                    Width = Convert.ToUInt32(Lines[12]);
+                    Height = Convert.ToUInt32(Lines[13]);
                     break;
                 case 7:
-                    Width = Convert.ToInt32(Lines[14]);
-                    Height = Convert.ToInt32(Lines[15]);
+                    Width = Convert.ToUInt32(Lines[14]);
+                    Height = Convert.ToUInt32(Lines[15]);
                     break;
                 case 8:
-                    Width = Convert.ToInt32(Lines[16]);
-                    Height = Convert.ToInt32(Lines[17]);
+                    Width = Convert.ToUInt32(Lines[16]);
+                    Height = Convert.ToUInt32(Lines[17]);
                     break;
                 case 9:
-                    Width = Convert.ToInt32(Lines[18]);
-                    Height = Convert.ToInt32(Lines[19]);
+                    Width = Convert.ToUInt32(Lines[18]);
+                    Height = Convert.ToUInt32(Lines[19]);
                     break;
                 case 10:
-                    Width = Convert.ToInt32(Lines[20]);
-                    Height = Convert.ToInt32(Lines[21]);
+                    Width = Convert.ToUInt32(Lines[20]);
+                    Height = Convert.ToUInt32(Lines[21]);
                     break;
                 case 11:
-                    Width = Convert.ToInt32(Lines[22]);
-                    Height = Convert.ToInt32(Lines[23]);
+                    Width = Convert.ToUInt32(Lines[22]);
+                    Height = Convert.ToUInt32(Lines[23]);
                     break;
                 default:
-                    Width = Convert.ToInt32(Lines[7]);
-                    Height = Convert.ToInt32(Lines[8]);
+                    Width = Convert.ToUInt32(Lines[7]);
+                    Height = Convert.ToUInt32(Lines[8]);
                     break;
             }
         }
-        public int GetScreenWidth() 
+        public uint GetScreenWidth() 
         {
             return Width;     
         }
-        public int GetScreenHeith() 
+        public uint GetScreenHeith() 
         {
             return Height;
         }
