@@ -5,12 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using SFML.Graphics;
 using SFML.Window;
+using SFML.System;
 namespace TMTD
 {
     class Game
     {
         private RenderWindow window;
         public static readonly uint FRAMERATE_LIMIT = 60;
+        private static Vector2f windowSize;
         Gameplay gameplay;
         MenuPrincipal menu;   
         public Game() 
@@ -37,11 +39,16 @@ namespace TMTD
         public void UpdateGame() 
         {
             gameplay.UpdateGameplay();
+            windowSize = window.GetView().Size;
         }
         public void DrawGame() 
         {
             gameplay.DrawGameplay(window);
             window.Display();
+        }
+        public Vector2f GetWindowSize() 
+        {
+            return windowSize;
         }
     }
 }

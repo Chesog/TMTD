@@ -11,21 +11,21 @@ namespace TMTD
     class Gameplay
     {
         private Player player;
-        private Background background;
+        private AllBackground background;
         public Gameplay() 
         {
             player = new Player("Max",1000,100,0,100, Locations.Home);
-            background = new Background(player);
+            background = new AllBackground(player);
         }
         public void UpdateGameplay() 
         {
-            player.UpdatePlayer();
-            background.UpdateBackground();
+            player.Update();
+            background.UpdateBackground(player);
         }
         public void DrawGameplay(RenderWindow window) 
         {
             background.DrawBackground(window);
-            player.DrawPlayer(window);
+            player.Draw(window);
         }
     }
 }

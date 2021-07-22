@@ -6,17 +6,15 @@ using System.Threading.Tasks;
 using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
+using System.IO;
 
 namespace TMTD
 {
-    class Player
-    {
-        private Sprite sprite;
-        private Texture texture;
+    class Player : GameObjetBase
+    {      
         private IntRect frameRect;
         private int sheetColums = 10;
         private int sheetRows = 9;
-        public Vector2f position;
         private float speed;
         public List<Bullet> bullets;
         private float Timer;
@@ -29,11 +27,12 @@ namespace TMTD
         private int MinAtkk;
         private int MaxAttk;
         private Locations location;
-        public Player()
+        private float GravitySpeed;
+        public Player() : base("Player" + Path.DirectorySeparatorChar + "Sprites" + Path.DirectorySeparatorChar + "PlayerAnimations" + Path.DirectorySeparatorChar + "PlayerMovement.png", new Vector2f(0.0f, 0.0f))
         {
 
         }
-        public Player(string Name , int MaxLife , int MaxMana ,  int MinAttk , int MaxAttk , Locations spawnpoint) 
+        public Player(string Name , int MaxLife , int MaxMana ,  int MinAttk , int MaxAttk , Locations spawnpoint) : base ("Player" + Path.DirectorySeparatorChar + "Sprites" + Path.DirectorySeparatorChar + "PlayerAnimations" + Path.DirectorySeparatorChar + "PlayerMovement.png" , new Vector2f(0.0f, 0.0f))
         {
             this.Name = Name;
             this.MaxLife = MaxLife;
@@ -44,50 +43,66 @@ namespace TMTD
             this.Mana = MaxMana;
 
             location = spawnpoint;
-            bullets = new List<Bullet>();
-            texture = new Texture("Player/Sprites/PlayerAnimations/PlayerMovement.png");
+            bullets = new List<Bullet>();       
             frameRect = new IntRect(0, 0, (int)texture.Size.X / sheetColums, (int)texture.Size.Y / sheetRows);
-            sprite = new Sprite(texture, frameRect);
             sprite.Scale = new Vector2f(1.0f, 1.0f);
-            position = new Vector2f(0.0f, 0.0f);
-            sprite.Position = position;
             speed = 250.0f;
             RateOfFire = 1.0f;
+            GravitySpeed = 3.0f;
         }
-
-        public void UpdatePlayer()
+        public override void Update()
         {
             Movement();
             Atakk();
+            base.Update();
+       
+        }
+        public override void Draw(RenderWindow window)
+        {
+            base.Draw(window);
+            for (int i = 0; i < bullets.Count; i++)
+            {
+                if (bullets[i] != null)
+                {
+                    bullets[i].Draw(window);
+                }
+            }
         }
         private void Movement() 
         {
             if (Keyboard.IsKeyPressed(Keyboard.Key.D))
             {
-                position.X += (speed * (1.0f / (float)Game.FRAMERATE_LIMIT));
+                CurrentPosition.X += (speed * (1.0f / (float)Game.FRAMERATE_LIMIT));
             }
             if (Keyboard.IsKeyPressed(Keyboard.Key.A))
             {
-                position.X -= (speed * (1.0f / (float)Game.FRAMERATE_LIMIT));
+                CurrentPosition.X -= (speed * (1.0f / (float)Game.FRAMERATE_LIMIT));
             }
             if (Keyboard.IsKeyPressed(Keyboard.Key.W))
             {
-                position.Y -= (speed * (1.0f / (float)Game.FRAMERATE_LIMIT));
+                CurrentPosition.Y -= (speed * (1.0f / (float)Game.FRAMERATE_LIMIT));
             }
             if (Keyboard.IsKeyPressed(Keyboard.Key.S))
             {
-                position.Y += (speed * (1.0f / (float)Game.FRAMERATE_LIMIT));
+                CurrentPosition.Y += (speed * (1.0f / (float)Game.FRAMERATE_LIMIT));
             }
+            if (Keyboard.IsKeyPressed(Keyboard.Key.Space))
+            {
+              //  CurrentPosition.Y -= (GravitySpeed * (1.0f / (float)Game.FRAMERATE_LIMIT));
+              //  CurrentPosition.Y += (GravitySpeed * (1.0f / (float)Game.FRAMERATE_LIMIT));
+            }
+            //position.Y -= GravitySpeed;
+            //GravitySpeed -= 0.02f;
         }
         private void Atakk() 
         {
-            if (Keyboard.IsKeyPressed(Keyboard.Key.J))
-            {
-
-            }
             if (Keyboard.IsKeyPressed(Keyboard.Key.K))
             {
-
+                
+            }
+            if (Keyboard.IsKeyPressed(Keyboard.Key.L))
+            {
+                
             }
         }
         public void HealPlayer() 
@@ -138,18 +153,9 @@ namespace TMTD
         {
             location = Locations.Castle;
         }
-        public void DrawPlayer(RenderWindow window)
-        {
-            window.Draw(sprite);
-            for (int i = 0; i < bullets.Count; i++)
-            {
-                if (bullets[i] != null)
-                {
-                    bullets[i].Draw(window);
-                }
-            }
-        }
         public void RestPlayer() { }
+
+
     }
 }
 
