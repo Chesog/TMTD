@@ -30,7 +30,7 @@ namespace TMTD
         }
         public void Update()
         {
-            bulletposition.X += (bulletspeed * (1.0f / (float)Game.FRAMERATE_LIMIT));
+            bulletposition.X += bulletspeed * FrameRate.GetDeltaTime() ;
             Console.WriteLine("dispara");
             sprite.Position = bulletposition;
         }

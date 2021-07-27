@@ -11,7 +11,6 @@ namespace TMTD
     class Game
     {
         private RenderWindow window;
-        public static readonly uint FRAMERATE_LIMIT = 60;
         private static Vector2f windowSize;
         Gameplay gameplay;
         MenuPrincipal menu;   
@@ -24,7 +23,7 @@ namespace TMTD
             videoMode.Height = 900;
             window = new RenderWindow(videoMode, "The Mark Of The Deamned");
             window.Closed += CloseWindow;
-            window.SetFramerateLimit(FRAMERATE_LIMIT);
+            window.SetFramerateLimit(FrameRate.FRAMERATE_LIMIT);
         }
         private void CloseWindow(object sender , EventArgs e) 
         {

@@ -12,7 +12,6 @@ namespace TMTD
 {
     class Player : GameObjetBase
     {      
-        private IntRect frameRect;
         private int sheetColums = 10;
         private int sheetRows = 9;
         private float speed;
@@ -28,11 +27,13 @@ namespace TMTD
         private int MaxAttk;
         private Locations location;
         private float GravitySpeed;
+        public int TextureXSize;
+        public int TextureYSize;
         public Player() : base("Player" + Path.DirectorySeparatorChar + "Sprites" + Path.DirectorySeparatorChar + "PlayerAnimations" + Path.DirectorySeparatorChar + "PlayerMovement.png", new Vector2f(0.0f, 0.0f))
         {
 
         }
-        public Player(string Name , int MaxLife , int MaxMana ,  int MinAttk , int MaxAttk , Locations spawnpoint) : base ("Player" + Path.DirectorySeparatorChar + "Sprites" + Path.DirectorySeparatorChar + "PlayerAnimations" + Path.DirectorySeparatorChar + "PlayerMovement.png" , new Vector2f(0.0f, 0.0f))
+        public Player(string Name , int MaxLife , int MaxMana ,  int MinAttk , int MaxAttk , Locations spawnpoint) : base ("Player" + Path.DirectorySeparatorChar + "Sprites" + Path.DirectorySeparatorChar + "PlayerAnimations" + Path.DirectorySeparatorChar + "PlayerMovement.png" , new Vector2f(0.0f, 0.0f), new IntRect(0,0,1000 ,495)
         {
             this.Name = Name;
             this.MaxLife = MaxLife;
@@ -45,6 +46,8 @@ namespace TMTD
             location = spawnpoint;
             bullets = new List<Bullet>();       
             frameRect = new IntRect(0, 0, (int)texture.Size.X / sheetColums, (int)texture.Size.Y / sheetRows);
+            TextureXSize = (int)texture.Size.X / sheetColums;
+            TextureYSize = (int)texture.Size.Y / sheetRows;
             sprite.Scale = new Vector2f(1.0f, 1.0f);
             speed = 250.0f;
             RateOfFire = 1.0f;
@@ -54,6 +57,7 @@ namespace TMTD
         {
             Movement();
             Atakk();
+            Gravity();
             base.Update();
        
         }
@@ -72,27 +76,30 @@ namespace TMTD
         {
             if (Keyboard.IsKeyPressed(Keyboard.Key.D))
             {
-                CurrentPosition.X += (speed * (1.0f / (float)Game.FRAMERATE_LIMIT));
+                CurrentPosition.X += speed * FrameRate.GetDeltaTime();
             }
             if (Keyboard.IsKeyPressed(Keyboard.Key.A))
             {
-                CurrentPosition.X -= (speed * (1.0f / (float)Game.FRAMERATE_LIMIT));
+                CurrentPosition.X -= speed * FrameRate.GetDeltaTime();
             }
             if (Keyboard.IsKeyPressed(Keyboard.Key.W))
             {
-                CurrentPosition.Y -= (speed * (1.0f / (float)Game.FRAMERATE_LIMIT));
+                CurrentPosition.Y -= speed * FrameRate.GetDeltaTime();
             }
             if (Keyboard.IsKeyPressed(Keyboard.Key.S))
             {
-                CurrentPosition.Y += (speed * (1.0f / (float)Game.FRAMERATE_LIMIT));
+                CurrentPosition.Y += speed * FrameRate.GetDeltaTime();
             }
             if (Keyboard.IsKeyPressed(Keyboard.Key.Space))
             {
-              //  CurrentPosition.Y -= (GravitySpeed * (1.0f / (float)Game.FRAMERATE_LIMIT));
-              //  CurrentPosition.Y += (GravitySpeed * (1.0f / (float)Game.FRAMERATE_LIMIT));
+                CurrentPosition.Y -= speed * FrameRate.GetDeltaTime();
             }
-            //position.Y -= GravitySpeed;
-            //GravitySpeed -= 0.02f;
+            
+        }
+        private void Gravity() 
+        {
+            CurrentPosition.Y += GravitySpeed * FrameRate.GetDeltaTime();
+            GravitySpeed += 0.02f;
         }
         private void Atakk() 
         {
