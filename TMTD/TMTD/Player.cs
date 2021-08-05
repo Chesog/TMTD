@@ -730,10 +730,11 @@ namespace TMTD
                         SetStatus(Status.IdleR);
                     }
                 }
+                CurrentPosition.X += (texture.Size.X * sprite.Scale.X) / 2.0f;
+                CurrentPosition.Y += (texture.Size.Y * sprite.Scale.Y) / 2.0f;
+                Camera.GetInstance().UpdateCamera(CurrentPosition);
             }
-            CurrentPosition.X += (texture.Size.X * sprite.Scale.X) / 2.0f;
-            CurrentPosition.Y += (texture.Size.Y * sprite.Scale.Y) / 2.0f;
-            Camera.GetInstance().UpdateCamera(CurrentPosition);
+
         }
         private void Gravity()
         {
@@ -788,6 +789,10 @@ namespace TMTD
                     bullets.Add(new Bullet(spawnposition));
                     fireDelay = 0.0f;
                 }
+            }
+            for (int i = 0; i < bullets.Count; i++)
+            {
+                bullets[i].Update();
             }
         }
         private void DeletOldBullets()
