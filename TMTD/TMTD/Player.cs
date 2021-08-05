@@ -6,14 +6,12 @@ using System.IO;
 
 namespace TMTD
 {
-    class Player : GameObjetBase
+    class Player : AnimatedObjetBase, IColicionable
     {
-        enum Status {IdleR, IdleL , MovingR , MovingL , JumpR , JumpL , Attk1R , Attk1L , Attk2R , Attk2L , ShootR , ShootL , BlockR , BlockL , BlockedR , BlockedL , RollR , RollL , HangR , HangL , HitR , HitL , DeadR , DeadL };
-        private int sheetColums = 10;
-        private int sheetRows = 18;
+        public enum Status { IdleR, IdleL, MovingR, MovingL, Attk1R, Attk1L, Attk2R, Attk2L, ShootR, ShootL, JumpR, JumpL, HitR, HitL, DeadR, DeadL, BlockR, BlockL, BlockedR, BlockedL, RollR, RollL, HangR, HangL, };
+
         private float speed;
         public List<Bullet> bullets;
-        private float Timer;
         private float RateOfFire;
         private float fireDelay;
         private string Name;
@@ -26,18 +24,13 @@ namespace TMTD
         private Locations location;
         private float GravitySpeed;
         private Status status;
-        Clock FrameTimer;
-        private IntRect frameRect;
-        private List<List<Vector2i>> animations;  
-        private float animTime = 1.5f;
-        private int CurrentFrame = 0;
-        private char LastDirectionPresed;
 
-        public Player() : base("Player" + Path.DirectorySeparatorChar + "Sprites" + Path.DirectorySeparatorChar + "PlayerAnimations" + Path.DirectorySeparatorChar + "PlayerMovement.png", new Vector2f(0.0f, 0.0f))
+
+        public Player(int SheetColums, int SheetRows) : base("Player" + Path.DirectorySeparatorChar + "Sprites" + Path.DirectorySeparatorChar + "PlayerAnimations" + Path.DirectorySeparatorChar + "PlayerMovement3.png", new Vector2f(0.0f, 0.0f), SheetColums, SheetRows)
         {
 
         }
-        public Player(string Name, int MaxLife, int MaxMana, int MinAttk, int MaxAttk, Locations spawnpoint) : base("Player" + Path.DirectorySeparatorChar + "Sprites" + Path.DirectorySeparatorChar + "PlayerAnimations" + Path.DirectorySeparatorChar + "PlayerMovement3.png", new Vector2f(0.0f, 0.0f))
+        public Player(string Name, int MaxLife, int MaxMana, int MinAttk, int MaxAttk, Locations spawnpoint, int SheetColums, int SheetRows) : base("Player" + Path.DirectorySeparatorChar + "Sprites" + Path.DirectorySeparatorChar + "PlayerAnimations" + Path.DirectorySeparatorChar + "PlayerMovement3.png", new Vector2f(0.0f, 0.0f), SheetColums, SheetRows)
         {
 
             this.Name = Name;
@@ -50,10 +43,8 @@ namespace TMTD
 
             location = spawnpoint;
             bullets = new List<Bullet>();
-            frameRect = new IntRect();
-            frameRect.Width = (int)texture.Size.X / sheetColums;
-            frameRect.Height = (int)texture.Size.Y / sheetRows;
-            sprite.TextureRect = frameRect;
+            CollitionManager.Getinstance().addToColitionManeger(this);
+
             sprite.Position = CurrentPosition;
             sprite.Scale = new Vector2f(2.0f, 2.0f);
             speed = 250.0f;
@@ -61,6 +52,7 @@ namespace TMTD
             GravitySpeed = 3.0f;
             FrameTimer = new Clock();
             animations = new List<List<Vector2i>>();
+
             #region IdleRight
             animations.Add(new List<Vector2i>());
             animations[(int)Status.IdleR].Add(new Vector2i(0, 0));
@@ -75,12 +67,12 @@ namespace TMTD
             #region IdleLeft
             animations.Add(new List<Vector2i>());
             animations[(int)Status.IdleL].Add(new Vector2i(0, 9));
-            animations[(int)Status.IdleR].Add(new Vector2i(1, 9));
-            animations[(int)Status.IdleR].Add(new Vector2i(2, 9));
-            animations[(int)Status.IdleR].Add(new Vector2i(3, 9));
-            animations[(int)Status.IdleR].Add(new Vector2i(4, 9));
-            animations[(int)Status.IdleR].Add(new Vector2i(5, 9));
-            animations[(int)Status.IdleR].Add(new Vector2i(6, 9));
+            animations[(int)Status.IdleL].Add(new Vector2i(1, 9));
+            animations[(int)Status.IdleL].Add(new Vector2i(2, 9));
+            animations[(int)Status.IdleL].Add(new Vector2i(3, 9));
+            animations[(int)Status.IdleL].Add(new Vector2i(4, 9));
+            animations[(int)Status.IdleL].Add(new Vector2i(5, 9));
+            animations[(int)Status.IdleL].Add(new Vector2i(6, 9));
             #endregion
             #region MovementRight
             animations.Add(new List<Vector2i>());
@@ -321,6 +313,7 @@ namespace TMTD
             Movement();
             UpdateAnimation();
             Atakk();
+            Shoot();
             Gravity();
             base.Update();
 
@@ -336,15 +329,22 @@ namespace TMTD
                 }
             }
         }
+        private void SetStatus(Status changestatus)
+        {
+
+            status = changestatus;
+            CurrentFrame = 0;
+            FrameTimer.Restart();
+        }
         public void UpdateAnimation()
         {
             switch (status)
             {
                 case Status.IdleR:
-                    if (FrameTimer.ElapsedTime.AsSeconds() > animTime / animations[(int)Status.IdleR].Count)
+                    if (FrameTimer.ElapsedTime.AsSeconds() > animTime / animations[(int)Status.IdleR].Count - 1)
                     {
                         CurrentFrame++;
-                        if (CurrentFrame == animations[(int)Status.IdleR].Count)
+                        if (CurrentFrame >= animations[(int)Status.IdleR].Count)
                         {
                             CurrentFrame = 0;
                         }
@@ -357,7 +357,7 @@ namespace TMTD
                     if (FrameTimer.ElapsedTime.AsSeconds() > animTime / animations[(int)Status.IdleL].Count)
                     {
                         CurrentFrame++;
-                        if (CurrentFrame == animations[(int)Status.IdleL].Count)
+                        if (CurrentFrame >= animations[(int)Status.IdleL].Count - 1)
                         {
                             CurrentFrame = 0;
                         }
@@ -367,134 +367,444 @@ namespace TMTD
                     frameRect.Top = animations[(int)Status.IdleL][CurrentFrame].Y * frameRect.Height;
                     break;
                 case Status.MovingR:
-
+                    if (FrameTimer.ElapsedTime.AsSeconds() > animTime / animations[(int)Status.MovingR].Count)
+                    {
+                        CurrentFrame++;
+                        if (CurrentFrame >= animations[(int)Status.MovingR].Count - 1)
+                        {
+                            CurrentFrame = 0;
+                        }
+                        FrameTimer.Restart();
+                    }
+                    frameRect.Left = animations[(int)Status.MovingR][CurrentFrame].X * frameRect.Width;
+                    frameRect.Top = animations[(int)Status.MovingR][CurrentFrame].Y * frameRect.Height;
                     break;
                 case Status.MovingL:
-                    break;
-                case Status.JumpR:
-                    break;
-                case Status.JumpL:
+                    if (FrameTimer.ElapsedTime.AsSeconds() > animTime / animations[(int)Status.MovingL].Count)
+                    {
+                        CurrentFrame++;
+                        if (CurrentFrame >= animations[(int)Status.MovingL].Count - 1)
+                        {
+                            CurrentFrame = 0;
+                        }
+                        FrameTimer.Restart();
+                    }
+                    frameRect.Left = animations[(int)Status.MovingL][CurrentFrame].X * frameRect.Width;
+                    frameRect.Top = animations[(int)Status.MovingL][CurrentFrame].Y * frameRect.Height;
                     break;
                 case Status.Attk1R:
+                    if (FrameTimer.ElapsedTime.AsSeconds() > animTime / animations[(int)Status.Attk1R].Count)
+                    {
+                        CurrentFrame++;
+                        if (CurrentFrame >= animations[(int)Status.Attk1R].Count - 1)
+                        {
+                            CurrentFrame = 0;
+                            status = Status.Attk2R;
+                        }
+                        FrameTimer.Restart();
+                    }
+                    frameRect.Left = animations[(int)Status.Attk1R][CurrentFrame].X * frameRect.Width;
+                    frameRect.Top = animations[(int)Status.Attk1R][CurrentFrame].Y * frameRect.Height;
                     break;
                 case Status.Attk1L:
+                    if (FrameTimer.ElapsedTime.AsSeconds() > animTime / animations[(int)Status.Attk1L].Count)
+                    {
+                        CurrentFrame++;
+                        if (CurrentFrame >= animations[(int)Status.Attk1L].Count - 1)
+                        {
+                            CurrentFrame = 0;
+                            status = Status.Attk2L;
+                        }
+                        FrameTimer.Restart();
+                    }
+                    frameRect.Left = animations[(int)Status.Attk1L][CurrentFrame].X * frameRect.Width;
+                    frameRect.Top = animations[(int)Status.Attk1L][CurrentFrame].Y * frameRect.Height;
                     break;
                 case Status.Attk2R:
+                    if (FrameTimer.ElapsedTime.AsSeconds() > animTime / animations[(int)Status.Attk2R].Count)
+                    {
+                        CurrentFrame++;
+                        if (CurrentFrame >= animations[(int)Status.Attk2R].Count - 1)
+                        {
+                            CurrentFrame = 0;
+                            status = Status.IdleR;
+                        }
+                        FrameTimer.Restart();
+                    }
+                    frameRect.Left = animations[(int)Status.Attk2R][CurrentFrame].X * frameRect.Width;
+                    frameRect.Top = animations[(int)Status.Attk2R][CurrentFrame].Y * frameRect.Height;
                     break;
                 case Status.Attk2L:
+                    if (FrameTimer.ElapsedTime.AsSeconds() > animTime / animations[(int)Status.Attk2L].Count)
+                    {
+                        CurrentFrame++;
+                        if (CurrentFrame >= animations[(int)Status.Attk2L].Count - 1)
+                        {
+                            CurrentFrame = 0;
+                            status = Status.IdleL;
+                        }
+                        FrameTimer.Restart();
+                    }
+                    frameRect.Left = animations[(int)Status.Attk2L][CurrentFrame].X * frameRect.Width;
+                    frameRect.Top = animations[(int)Status.Attk2L][CurrentFrame].Y * frameRect.Height;
                     break;
                 case Status.ShootR:
+                    if (FrameTimer.ElapsedTime.AsSeconds() > animTime / animations[(int)Status.ShootR].Count)
+                    {
+                        CurrentFrame++;
+                        if (CurrentFrame >= animations[(int)Status.ShootR].Count - 1)
+                        {
+                            CurrentFrame = 0;
+                            status = Status.IdleR;
+                        }
+                        FrameTimer.Restart();
+                    }
+                    frameRect.Left = animations[(int)Status.ShootR][CurrentFrame].X * frameRect.Width;
+                    frameRect.Top = animations[(int)Status.ShootR][CurrentFrame].Y * frameRect.Height;
                     break;
                 case Status.ShootL:
+                    if (FrameTimer.ElapsedTime.AsSeconds() > animTime / animations[(int)Status.ShootL].Count)
+                    {
+                        CurrentFrame++;
+                        if (CurrentFrame >= animations[(int)Status.ShootL].Count - 1)
+                        {
+                            CurrentFrame = 0;
+                            status = Status.IdleL;
+                        }
+                        FrameTimer.Restart();
+                    }
+                    frameRect.Left = animations[(int)Status.ShootL][CurrentFrame].X * frameRect.Width;
+                    frameRect.Top = animations[(int)Status.ShootL][CurrentFrame].Y * frameRect.Height;
                     break;
-                case Status.BlockR:
+                case Status.JumpR:
+                    if (FrameTimer.ElapsedTime.AsSeconds() > animTime / animations[(int)Status.JumpR].Count)
+                    {
+                        CurrentFrame++;
+                        if (CurrentFrame >= animations[(int)Status.JumpR].Count - 1)
+                        {
+                            CurrentFrame = 0;
+                            status = Status.IdleR;
+                        }
+                        FrameTimer.Restart();
+                    }
+                    frameRect.Left = animations[(int)Status.JumpR][CurrentFrame].X * frameRect.Width;
+                    frameRect.Top = animations[(int)Status.JumpR][CurrentFrame].Y * frameRect.Height;
                     break;
-                case Status.BlockL:
-                    break;
-                case Status.BlockedR:
-                    break;
-                case Status.BlockedL:
-                    break;
-                case Status.RollR:
-                    break;
-                case Status.RollL:
-                    break;
-                case Status.HangR:
-                    break;
-                case Status.HangL:
+                case Status.JumpL:
+                    if (FrameTimer.ElapsedTime.AsSeconds() > animTime / animations[(int)Status.JumpL].Count)
+                    {
+                        CurrentFrame++;
+                        if (CurrentFrame >= animations[(int)Status.JumpL].Count - 1)
+                        {
+                            CurrentFrame = 0;
+                            status = Status.IdleL;
+                        }
+                        FrameTimer.Restart();
+                    }
+                    frameRect.Left = animations[(int)Status.JumpL][CurrentFrame].X * frameRect.Width;
+                    frameRect.Top = animations[(int)Status.JumpL][CurrentFrame].Y * frameRect.Height;
                     break;
                 case Status.HitR:
+                    if (FrameTimer.ElapsedTime.AsSeconds() > animTime / animations[(int)Status.HitR].Count)
+                    {
+                        CurrentFrame++;
+                        if (CurrentFrame >= animations[(int)Status.HitR].Count - 1)
+                        {
+                            CurrentFrame = 0;
+                            status = Status.IdleR;
+                        }
+                        FrameTimer.Restart();
+                    }
+                    frameRect.Left = animations[(int)Status.HitR][CurrentFrame].X * frameRect.Width;
+                    frameRect.Top = animations[(int)Status.HitR][CurrentFrame].Y * frameRect.Height;
                     break;
                 case Status.HitL:
+                    if (FrameTimer.ElapsedTime.AsSeconds() > animTime / animations[(int)Status.HitL].Count)
+                    {
+                        CurrentFrame++;
+                        if (CurrentFrame >= animations[(int)Status.HitL].Count - 1)
+                        {
+                            CurrentFrame = 0;
+                            status = Status.IdleL;
+                        }
+                        FrameTimer.Restart();
+                    }
+                    frameRect.Left = animations[(int)Status.HitL][CurrentFrame].X * frameRect.Width;
+                    frameRect.Top = animations[(int)Status.HitL][CurrentFrame].Y * frameRect.Height;
                     break;
                 case Status.DeadR:
+                    if (FrameTimer.ElapsedTime.AsSeconds() > animTime / animations[(int)Status.DeadR].Count)
+                    {
+                        CurrentFrame++;
+                        if (CurrentFrame >= animations[(int)Status.IdleL].Count - 1)
+                        {
+                            CurrentFrame = 0;
+                        }
+                        FrameTimer.Restart();
+                    }
+                    frameRect.Left = animations[(int)Status.DeadR][CurrentFrame].X * frameRect.Width;
+                    frameRect.Top = animations[(int)Status.DeadR][CurrentFrame].Y * frameRect.Height;
                     break;
                 case Status.DeadL:
+                    if (FrameTimer.ElapsedTime.AsSeconds() > animTime / animations[(int)Status.DeadL].Count)
+                    {
+                        CurrentFrame++;
+                        if (CurrentFrame >= animations[(int)Status.DeadL].Count - 1)
+                        {
+                            CurrentFrame = 0;
+                        }
+                        FrameTimer.Restart();
+                    }
+                    frameRect.Left = animations[(int)Status.DeadL][CurrentFrame].X * frameRect.Width;
+                    frameRect.Top = animations[(int)Status.DeadL][CurrentFrame].Y * frameRect.Height;
+                    break;
+                case Status.BlockR:
+                    if (FrameTimer.ElapsedTime.AsSeconds() > animTime / animations[(int)Status.BlockR].Count)
+                    {
+                        CurrentFrame++;
+                        if (CurrentFrame >= animations[(int)Status.BlockR].Count - 1)
+                        {
+                            CurrentFrame = 0;
+                        }
+                        FrameTimer.Restart();
+                    }
+                    frameRect.Left = animations[(int)Status.BlockR][CurrentFrame].X * frameRect.Width;
+                    frameRect.Top = animations[(int)Status.BlockR][CurrentFrame].Y * frameRect.Height;
+                    break;
+                case Status.BlockL:
+                    if (FrameTimer.ElapsedTime.AsSeconds() > animTime / animations[(int)Status.BlockL].Count)
+                    {
+                        CurrentFrame++;
+                        if (CurrentFrame >= animations[(int)Status.BlockL].Count - 1)
+                        {
+                            CurrentFrame = 0;
+                        }
+                        FrameTimer.Restart();
+                    }
+                    frameRect.Left = animations[(int)Status.BlockL][CurrentFrame].X * frameRect.Width;
+                    frameRect.Top = animations[(int)Status.BlockL][CurrentFrame].Y * frameRect.Height;
+                    break;
+                case Status.BlockedR:
+                    if (FrameTimer.ElapsedTime.AsSeconds() > animTime / animations[(int)Status.BlockedR].Count)
+                    {
+                        CurrentFrame++;
+                        if (CurrentFrame >= animations[(int)Status.BlockedR].Count - 1)
+                        {
+                            CurrentFrame = 0;
+                            status = Status.BlockR;
+                        }
+                        FrameTimer.Restart();
+                    }
+                    frameRect.Left = animations[(int)Status.BlockedR][CurrentFrame].X * frameRect.Width;
+                    frameRect.Top = animations[(int)Status.BlockedR][CurrentFrame].Y * frameRect.Height;
+                    break;
+                case Status.BlockedL:
+                    if (FrameTimer.ElapsedTime.AsSeconds() > animTime / animations[(int)Status.BlockedL].Count)
+                    {
+                        CurrentFrame++;
+                        if (CurrentFrame >= animations[(int)Status.BlockedL].Count - 1)
+                        {
+                            CurrentFrame = 0;
+                            status = Status.BlockL;
+                        }
+                        FrameTimer.Restart();
+                    }
+                    frameRect.Left = animations[(int)Status.BlockedL][CurrentFrame].X * frameRect.Width;
+                    frameRect.Top = animations[(int)Status.BlockedL][CurrentFrame].Y * frameRect.Height;
+                    break;
+                case Status.RollR:
+                    if (FrameTimer.ElapsedTime.AsSeconds() > animTime / animations[(int)Status.RollR].Count)
+                    {
+                        CurrentFrame++;
+                        if (CurrentFrame >= animations[(int)Status.RollR].Count - 1)
+                        {
+                            CurrentFrame = 0;
+                            status = Status.IdleR;
+                        }
+                        FrameTimer.Restart();
+                    }
+                    frameRect.Left = animations[(int)Status.RollR][CurrentFrame].X * frameRect.Width;
+                    frameRect.Top = animations[(int)Status.RollR][CurrentFrame].Y * frameRect.Height;
+                    break;
+                case Status.RollL:
+                    if (FrameTimer.ElapsedTime.AsSeconds() > animTime / animations[(int)Status.RollL].Count)
+                    {
+                        CurrentFrame++;
+                        if (CurrentFrame >= animations[(int)Status.RollL].Count - 1)
+                        {
+                            CurrentFrame = 0;
+                            status = Status.IdleL;
+                        }
+                        FrameTimer.Restart();
+                    }
+                    frameRect.Left = animations[(int)Status.RollL][CurrentFrame].X * frameRect.Width;
+                    frameRect.Top = animations[(int)Status.RollL][CurrentFrame].Y * frameRect.Height;
+                    break;
+                case Status.HangR:
+                    if (FrameTimer.ElapsedTime.AsSeconds() > animTime / animations[(int)Status.HangR].Count)
+                    {
+                        CurrentFrame++;
+                        if (CurrentFrame >= animations[(int)Status.HangR].Count - 1)
+                        {
+                            CurrentFrame = 0;
+                        }
+                        FrameTimer.Restart();
+                    }
+                    frameRect.Left = animations[(int)Status.HangR][CurrentFrame].X * frameRect.Width;
+                    frameRect.Top = animations[(int)Status.HangR][CurrentFrame].Y * frameRect.Height;
+                    break;
+                case Status.HangL:
+                    if (FrameTimer.ElapsedTime.AsSeconds() > animTime / animations[(int)Status.HangL].Count)
+                    {
+                        CurrentFrame++;
+                        if (CurrentFrame >= animations[(int)Status.HangL].Count - 1)
+                        {
+                            CurrentFrame = 0;
+                        }
+                        FrameTimer.Restart();
+                    }
+                    frameRect.Left = animations[(int)Status.HangL][CurrentFrame].X * frameRect.Width;
+                    frameRect.Top = animations[(int)Status.HangL][CurrentFrame].Y * frameRect.Height;
                     break;
                 default:
+                    status = Status.IdleR;
+                    frameRect.Left = animations[(int)Status.IdleR][CurrentFrame].X * frameRect.Width;
+                    frameRect.Top = animations[(int)Status.IdleR][CurrentFrame].Y * frameRect.Height;
                     break;
             }
             sprite.TextureRect = frameRect;
         }
         private void Movement()
         {
-            if (Keyboard.IsKeyPressed(Keyboard.Key.D))
+            if (status != Status.ShootL && status != Status.ShootR && status != Status.Attk1L && status != Status.Attk1R && status != Status.Attk2L && status != Status.Attk2R && status != Status.BlockL && status != Status.BlockR)
             {
-                CurrentPosition.X += speed * FrameRate.GetDeltaTime();
-                status = Status.MovingR;
-                LastDirectionPresed = 'D';
-            }
-            if (Keyboard.IsKeyPressed(Keyboard.Key.A))
-            {
-                CurrentPosition.X -= speed * FrameRate.GetDeltaTime();
-                status = Status.MovingL;
-                LastDirectionPresed = 'A';
-            }
-            if (Keyboard.IsKeyPressed(Keyboard.Key.W))
-            {
-                CurrentPosition.Y -= speed * FrameRate.GetDeltaTime();
-                status = Status.JumpR;
-            }
-            if (Keyboard.IsKeyPressed(Keyboard.Key.S))
-            {
-                CurrentPosition.Y += speed * FrameRate.GetDeltaTime();
-                status = Status.RollR;
-            }
-            bool IsMovingHorizontally = !Keyboard.IsKeyPressed(Keyboard.Key.A) && !Keyboard.IsKeyPressed(Keyboard.Key.D);
-            bool IsMovingVertically = !Keyboard.IsKeyPressed(Keyboard.Key.W) && !Keyboard.IsKeyPressed(Keyboard.Key.S);
-            if (IsMovingHorizontally && IsMovingVertically)
-            {
-                if (LastDirectionPresed == 'A')
-                {
-                    status = Status.IdleR;
-                }
-                else if (LastDirectionPresed == 'D')
-                {
-                    status = Status.IdleL;
-                }
-            }
 
+                if (Keyboard.IsKeyPressed(Keyboard.Key.D))
+                {
+                    CurrentPosition.X += speed * FrameRate.GetDeltaTime();
+                    SetStatus(Status.MovingR);
+                    LastDirectionPresed = 'D';
+                }
+                if (Keyboard.IsKeyPressed(Keyboard.Key.A))
+                {
+                    CurrentPosition.X -= speed * FrameRate.GetDeltaTime();
+                    SetStatus(Status.MovingL);
+                    LastDirectionPresed = 'A';
+                }
+                if (Keyboard.IsKeyPressed(Keyboard.Key.W) || Keyboard.IsKeyPressed(Keyboard.Key.Space))
+                {
+                    CurrentPosition.Y -= speed * FrameRate.GetDeltaTime();
+                    if (LastDirectionPresed == 'A')
+                    {
+                        SetStatus(Status.JumpL);
+                    }
+                    else if (LastDirectionPresed == 'D')
+                    {
+                        SetStatus(Status.JumpR);
+                    }
+
+                }
+                if (Keyboard.IsKeyPressed(Keyboard.Key.S))
+                {
+                    CurrentPosition.Y += speed * FrameRate.GetDeltaTime();
+                    if (LastDirectionPresed == 'A')
+                    {
+                        SetStatus(Status.RollL);
+                    }
+                    else if (LastDirectionPresed == 'D')
+                    {
+                        SetStatus(Status.RollR);
+                    }
+                }
+                bool IsMovingHorizontally = !Keyboard.IsKeyPressed(Keyboard.Key.A) && !Keyboard.IsKeyPressed(Keyboard.Key.D);
+                bool IsMovingVertically = !Keyboard.IsKeyPressed(Keyboard.Key.W) && !Keyboard.IsKeyPressed(Keyboard.Key.S);
+                bool IsInCombat = !Keyboard.IsKeyPressed(Keyboard.Key.K) && !Keyboard.IsKeyPressed(Keyboard.Key.J) && !Keyboard.IsKeyPressed(Keyboard.Key.L);
+                if (IsMovingHorizontally && IsMovingVertically && IsInCombat)
+                {
+                    if (LastDirectionPresed == 'A')
+                    {
+                        SetStatus(Status.IdleL);
+                    }
+                    else if (LastDirectionPresed == 'D')
+                    {
+                        SetStatus(Status.IdleR);
+                    }
+                }
+            }
+            CurrentPosition.X += (texture.Size.X * sprite.Scale.X) / 2.0f;
+            CurrentPosition.Y += (texture.Size.Y * sprite.Scale.Y) / 2.0f;
+            Camera.GetInstance().UpdateCamera(CurrentPosition);
         }
         private void Gravity()
         {
-            CurrentPosition.Y += GravitySpeed * FrameRate.GetDeltaTime();
-            GravitySpeed += 0.02f;
+            //CurrentPosition.Y += GravitySpeed * FrameRate.GetDeltaTime();
+            //GravitySpeed += 1.5f;
         }
         private void Atakk()
         {
 
             if (Keyboard.IsKeyPressed(Keyboard.Key.K))
             {
-
+                if (LastDirectionPresed == 'A')
+                {
+                    SetStatus(Status.BlockL);
+                }
+                else if (LastDirectionPresed == 'D')
+                {
+                    SetStatus(Status.BlockR);
+                }
             }
             if (Keyboard.IsKeyPressed(Keyboard.Key.L))
             {
-
+                if (LastDirectionPresed == 'A')
+                {
+                    SetStatus(Status.Attk1L);
+                }
+                else if (LastDirectionPresed == 'D')
+                {
+                    SetStatus(Status.Attk1R);
+                }
             }
         }
-        private void Shoot() 
+        private void Shoot()
         {
             if (Keyboard.IsKeyPressed(Keyboard.Key.J) && fireDelay >= RateOfFire)
             {
                 if (LastDirectionPresed == 'D')
                 {
-                  status = Status.ShootR;
-                  Vector2f spawnposition = CurrentPosition;
-                  spawnposition.X += (texture.Size.X * sprite.Scale.X) / 2.0f;
-                  spawnposition.Y += (texture.Size.Y * sprite.Scale.Y) / 2.0f;
-                  bullets.Add(new Bullet(spawnposition));
-                    fireDelay = 0.0f;
-                }
-                else if (LastDirectionPresed == 'A')
-                {
-                    status = Status.ShootL;
-                    status = Status.ShootR;
+                    SetStatus(Status.ShootR);
                     Vector2f spawnposition = CurrentPosition;
                     spawnposition.X += (texture.Size.X * sprite.Scale.X) / 2.0f;
                     spawnposition.Y += (texture.Size.Y * sprite.Scale.Y) / 2.0f;
                     bullets.Add(new Bullet(spawnposition));
                     fireDelay = 0.0f;
                 }
+                else if (LastDirectionPresed == 'A')
+                {
+                    SetStatus(Status.ShootL);
+                    Vector2f spawnposition = CurrentPosition;
+                    spawnposition.X += (texture.Size.X * sprite.Scale.X) / 2.0f;
+                    spawnposition.Y += (texture.Size.Y * sprite.Scale.Y) / 2.0f;
+                    bullets.Add(new Bullet(spawnposition));
+                    fireDelay = 0.0f;
+                }
+            }
+        }
+        private void DeletOldBullets()
+        {
+            List<int> indextoDelet = new List<int>();
+            for (int i = 0; i < bullets.Count; i++)
+            {
+                //bullets[i].Update();
+                //if (bullets[i].GetPosition().X > Game().X)
+                //{
+                //    indextoDelet.Add(i);
+                //}
+                //for (int i = indextoDelet.Count - 1; i >= 0; i++)
+                //{
+                //    bullets[i].Dispose();
+                //    bullets.RemoveAt(i);
+                //}
             }
         }
         public void HealPlayer()
@@ -525,6 +835,10 @@ namespace TMTD
         {
             return location;
         }
+        public Status GetStatus() 
+        {
+            return status;
+        }
         public void GoToShop()
         {
             location = Locations.Shop;
@@ -547,13 +861,78 @@ namespace TMTD
         }
         public void RestPlayer() { }
 
+        public FloatRect GetBounds()
+        {
+            return sprite.GetGlobalBounds();
+        }
 
+        public void OnColitionStay(IColicionable other)
+        {
+            if (other is Wall)
+            {
+                if (Keyboard.IsKeyPressed(Keyboard.Key.D))
+                {
+                    CurrentPosition.X -= speed * FrameRate.GetDeltaTime();
+                }
+                if (Keyboard.IsKeyPressed(Keyboard.Key.A))
+                {
+                    CurrentPosition.X += speed * FrameRate.GetDeltaTime();
+                }
+                if (Keyboard.IsKeyPressed(Keyboard.Key.W) || Keyboard.IsKeyPressed(Keyboard.Key.Space))
+                {
+                    CurrentPosition.Y += speed * FrameRate.GetDeltaTime();
+                }
+                if (Keyboard.IsKeyPressed(Keyboard.Key.S))
+                {
+                    CurrentPosition.Y -= speed * FrameRate.GetDeltaTime();
+                }
+                GravitySpeed = 0;
+            }
+            if (other is InvisibleWall)
+            {
+                GoToForest();
+                CurrentPosition.X = 0;
+                CurrentPosition.Y = 0;
+                MusicManager.GetInstance().Skip();
+            }
+        }
+
+        public override void CheckGarbage()
+        {
+            List<int> indexToDelete = new List<int>();
+            for (int i = 0; i < bullets.Count; i++)
+            {
+                bullets[i].CheckGarbage();
+                if (bullets[i].toDelelte)
+                {
+                    indexToDelete.Add(i);
+                }
+            }
+            for (int i = 0; i < indexToDelete.Count; i++)
+            {
+                bullets.RemoveAt(i);
+            }
+            if (toDelelte == true)
+            {
+                DisposeNow();
+            }
+            base.CheckGarbage();
+        }
+        public override void DisposeNow()
+        {
+            CollitionManager.Getinstance().removeFromColitionManager(this);
+            base.DisposeNow();
+        }
+
+        public void OnColitionEnter(IColicionable other)
+        {
+
+        }
+
+        public void OnColitionExit(IColicionable other)
+        {
+
+        }
     }
 
 }
-
-
-
-
-
-

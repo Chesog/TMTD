@@ -8,7 +8,8 @@ namespace TMTD
         protected Texture texture;
         protected Sprite sprite;
         protected Vector2f CurrentPosition;
-        protected IntRect frameRect;
+        public bool toDelelte;
+        public bool lateDispose;
        
         public GameObjetBase(string TexturePath, Vector2f startposition)
         {
@@ -16,6 +17,8 @@ namespace TMTD
             sprite = new Sprite(texture);
             CurrentPosition = startposition;
             sprite.Position = CurrentPosition;
+            toDelelte = false;
+            lateDispose = false;
         }
         public virtual void Update() 
         {
@@ -26,10 +29,26 @@ namespace TMTD
         {
             window.Draw(sprite);
         }
-        public void Dispose() 
+        public virtual void DisposeNow() 
         {
             sprite.Dispose();
             texture.Dispose();
+            toDelelte = true;
+        }
+        public void LateDispose() 
+        {
+            lateDispose = true;
+        }
+        public virtual void CheckGarbage() 
+        {
+            if (lateDispose == true)
+            {
+                DisposeNow();
+            }
+        }
+        public Vector2f GetPosition() 
+        {
+            return CurrentPosition;
         }
     }
 }

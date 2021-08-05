@@ -1,20 +1,26 @@
 ﻿using SFML.Graphics;
-using SFML.System;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.IO;
+using SFML.System;
 
 namespace TMTD
 {
-    class Bullet : GameObjetBase , IColicionable
+    class Wall : GameObjetBase, IColicionable
     {
-        public Bullet(Vector2f position) : base ("Player" + Path.DirectorySeparatorChar + "Sprites" + Path.DirectorySeparatorChar + "Fire.png", position )
+        public Wall() : base ("WallSprites" + Path.DirectorySeparatorChar + "Woodwall.png" , new Vector2f(500.0f , 500.0f))
         {
+           
+            sprite.Scale = new Vector2f(0.2f, 1.0f);
             CollitionManager.Getinstance().addToColitionManeger(this);
         }
 
         public override void CheckGarbage()
         {
-            
+           
         }
         public override void DisposeNow()
         {
@@ -22,6 +28,10 @@ namespace TMTD
             base.DisposeNow();
         }
 
+        public override void Draw(RenderWindow window)
+        {
+            base.Draw(window);
+        }
         public FloatRect GetBounds()
         {
             return sprite.GetGlobalBounds();
@@ -29,7 +39,7 @@ namespace TMTD
 
         public void OnColitionEnter(IColicionable other)
         {
-            
+           
         }
 
         public void OnColitionExit(IColicionable other)
@@ -40,12 +50,6 @@ namespace TMTD
         public void OnColitionStay(IColicionable other)
         {
 
-        }
-
-        public override void Update()
-        {
-            CurrentPosition.X += 50 * FrameRate.GetDeltaTime() ;
-            base.Update();
         }
     }
 }

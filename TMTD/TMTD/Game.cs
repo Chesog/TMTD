@@ -6,20 +6,32 @@ namespace TMTD
 {
     class Game
     {
+        private static Game instance;
+        public static Game GetInstance() 
+        {
+            if (instance == null)
+            {
+                instance = new Game();
+            }
+            return instance;
+        }
         private RenderWindow window;
         private static Vector2f windowSize;
-        Gameplay gameplay;
-        MenuPrincipal menu;   
-        public Game() 
+        private Gameplay gameplay;
+        private MenuPrincipal menu;
+        private Game() 
         {
-            gameplay = new Gameplay();
-            menu = new MenuPrincipal();
             VideoMode videoMode = new VideoMode();
             videoMode.Width = 1600;
             videoMode.Height = 900;
+
             window = new RenderWindow(videoMode, "The Mark Of The Deamned");
             window.Closed += CloseWindow;
             window.SetFramerateLimit(FrameRate.FRAMERATE_LIMIT);
+
+            gameplay = new Gameplay();
+            menu = new MenuPrincipal();
+            Camera.GetInstance().InitCamera(window);
         }
         private void CloseWindow(object sender , EventArgs e) 
         {
@@ -34,12 +46,17 @@ namespace TMTD
         public void UpdateGame() 
         {
             gameplay.UpdateGameplay();
+            Camera.GetInstance().UpdateCamera();
             windowSize = window.GetView().Size;
         }
         public void DrawGame() 
         {
             gameplay.DrawGameplay(window);
             window.Display();
+        }
+        public void CheckGarbage() 
+        {
+            gameplay.CheckGarbage();
         }
         public Vector2f GetWindowSize() 
         {

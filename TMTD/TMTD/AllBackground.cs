@@ -1,5 +1,6 @@
 ﻿using SFML.Graphics;
 using SFML.System;
+using System;
 using System.Collections.Generic;
 
 namespace TMTD
@@ -14,6 +15,7 @@ namespace TMTD
             CurrenLocation = player.GetLocations();
             loadedBackground = new List<Background>();
             loadedBackground.Add(new Background("Background/Sprites/Home/Home.jpg", new Vector2f (2.2f, 2.2f) ,Locations.Home));
+            loadedBackground.Add(new Background("Background/Sprites/Forest/Bosque.jpg", new Vector2f(2.2f, 2.2f), Locations.Forest));
         }
         public void UpdateBackground(Player player)
         {
@@ -29,54 +31,24 @@ namespace TMTD
                 }
             }
             
-           // switch (CurrenLocation)
-           // {
-           //     case Locations.Village:
-           //         DrawBacgroundVillage(window);
-           //         break;
-           //     case Locations.Castle:
-           //         DarwBackgroundCastle(window);
-           //         break;
-           //     case Locations.Forest:
-           //         DrawBackgroundForest(window);
-           //         break;
-           //     case Locations.Home:
-           //         DrawBackgroundHome(window);
-           //         break;
-           //     case Locations.Shop:
-           //         DrawBacgroundShop(window);
-           //         break;
-           //     default:
-           //         Console.WriteLine("Error");
-           //         break;
-           // }
+           switch (CurrenLocation)
+           {
+               case Locations.Village:
+                   break;
+               case Locations.Castle:
+                   break;
+               case Locations.Forest:
+                    MusicManager.GetInstance().Skip();
+                   break;
+               case Locations.Home:
+                   break;
+               case Locations.Shop:
+                   break;
+               default:
+                   Console.WriteLine("Error");
+                   break;
+           }
         }
-       // private void DrawBackgroundHome(RenderWindow window)
-       // {
-       //     texture = new Texture("Background/Sprites/Home/Home.jpg");
-       //     sprite = new Sprite(texture);
-       //     sprite.Scale = new Vector2f(2.2f, 2.2f);
-       //     window.Draw(sprite);
-       // }
-       // private void DrawBackgroundForest(RenderWindow window)
-       // {
-       //     window.Draw(sprite);
-       // }
-       // private void DrawBacgroundVillage(RenderWindow window)
-       // {
-       //     window.Draw(sprite);
-       // }
-       // private void DarwBackgroundCastle(RenderWindow window)
-       // {
-       //     window.Draw(sprite);
-       // }
-       // private void DrawBacgroundShop(RenderWindow window)
-       // {
-       //     window.Draw(sprite);
-       // }
-       // private void DrawBacgroundMenu(RenderWindow window)
-       // {
-       //     window.Draw(sprite);
-       // }
+       
     }
 }
