@@ -26,7 +26,7 @@ namespace TMTD
         private Vector2f currentPosition;
         private Camera() 
         {
-            currentPosition = view.Center;
+
         }
         public void InitCamera(RenderWindow window) 
         {

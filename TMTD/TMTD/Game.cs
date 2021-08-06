@@ -7,7 +7,7 @@ namespace TMTD
     class Game
     {
         private static Game instance;
-        public static Game GetInstance() 
+        public static Game GetInstance()
         {
             if (instance == null)
             {
@@ -18,8 +18,8 @@ namespace TMTD
         private RenderWindow window;
         private static Vector2f windowSize;
         private Gameplay gameplay;
-        private MenuPrincipal menu;
-        private Game() 
+        private MainMenu menu;
+        private Game()
         {
             VideoMode videoMode = new VideoMode();
             videoMode.Width = 1600;
@@ -30,35 +30,51 @@ namespace TMTD
             window.SetFramerateLimit(FrameRate.FRAMERATE_LIMIT);
 
             gameplay = new Gameplay();
-            menu = new MenuPrincipal();
+            menu = new MainMenu();
             Camera.GetInstance().InitCamera(window);
         }
-        private void CloseWindow(object sender , EventArgs e) 
+        private void CloseWindow(object sender, EventArgs e)
         {
             window.Close();
         }
-        public bool UpdateGameWindow() 
+        public bool UpdateGameWindow()
         {
             window.DispatchEvents();
             window.Clear(Color.Black);
             return window.IsOpen;
         }
-        public void UpdateGame() 
+        public void UpdateGame()
         {
-            gameplay.UpdateGameplay();
-            Camera.GetInstance().UpdateCamera();
-            windowSize = window.GetView().Size;
+            if (menu.exitMenu)
+            {
+                gameplay.UpdateGameplay();
+                windowSize = window.GetView().Size;
+            }
+            else
+            {
+                menu.Update();
+            }
         }
-        public void DrawGame() 
+        public void DrawGame()
         {
-            gameplay.DrawGameplay(window);
+            if (menu.exitMenu)
+            {
+                gameplay.DrawGameplay(window);
+            }
+            else
+            {
+                menu.Draw(window);
+            }
             window.Display();
         }
-        public void CheckGarbage() 
+        public void CheckGarbage()
         {
-            gameplay.CheckGarbage();
+            if (menu.exitMenu)
+            {
+                gameplay.CheckGarbage();
+            }
         }
-        public Vector2f GetWindowSize() 
+        public Vector2f GetWindowSize()
         {
             return windowSize;
         }

@@ -12,6 +12,10 @@ namespace TMTD
             CollitionManager.Getinstance().addToColitionManeger(this);
         }
 
+        public FloatRect GetBounds()
+        {
+            return sprite.GetGlobalBounds();
+        }
         public override void CheckGarbage()
         {
             
@@ -22,10 +26,7 @@ namespace TMTD
             base.DisposeNow();
         }
 
-        public FloatRect GetBounds()
-        {
-            return sprite.GetGlobalBounds();
-        }
+
 
         public void OnColitionEnter(IColicionable other)
         {

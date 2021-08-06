@@ -314,6 +314,7 @@ namespace TMTD
             UpdateAnimation();
             Atakk();
             Shoot();
+            DeletOldBullets();
             Gravity();
             base.Update();
 
@@ -341,10 +342,10 @@ namespace TMTD
             switch (status)
             {
                 case Status.IdleR:
-                    if (FrameTimer.ElapsedTime.AsSeconds() > animTime / animations[(int)Status.IdleR].Count - 1)
+                    if (FrameTimer.ElapsedTime.AsSeconds() > animTime / animations[(int)Status.IdleR].Count)
                     {
                         CurrentFrame++;
-                        if (CurrentFrame >= animations[(int)Status.IdleR].Count)
+                        if (CurrentFrame >= animations[(int)Status.IdleR].Count - 1)
                         {
                             CurrentFrame = 0;
                         }
@@ -373,6 +374,7 @@ namespace TMTD
                         if (CurrentFrame >= animations[(int)Status.MovingR].Count - 1)
                         {
                             CurrentFrame = 0;
+                            status = Status.IdleR;
                         }
                         FrameTimer.Restart();
                     }
@@ -386,6 +388,7 @@ namespace TMTD
                         if (CurrentFrame >= animations[(int)Status.MovingL].Count - 1)
                         {
                             CurrentFrame = 0;
+                            status = Status.IdleL;
                         }
                         FrameTimer.Restart();
                     }
@@ -676,63 +679,97 @@ namespace TMTD
         }
         private void Movement()
         {
-            if (status != Status.ShootL && status != Status.ShootR && status != Status.Attk1L && status != Status.Attk1R && status != Status.Attk2L && status != Status.Attk2R && status != Status.BlockL && status != Status.BlockR)
+            if (Joystick.IsConnected(0))
+            {
+                if (JoystickUtils.GetAxis(0, Joystick.Axis.U) != 0)
+                {
+                    CurrentPosition.X += JoystickUtils.GetAxis(0, Joystick.Axis.U) * speed * FrameRate.GetDeltaTime();
+                }
+                if (JoystickUtils.GetAxis(0, Joystick.Axis.V) != 0)
+                {
+                    CurrentPosition.Y += JoystickUtils.GetAxis(0, Joystick.Axis.V) * speed * FrameRate.GetDeltaTime();
+                }
+
+                if (Joystick.IsButtonPressed(0, JoystickUtils.GetButton(JoystickType.XBOX360, GameButtons.MainButtonDown)))
+                {
+                    FrameRate.SetTimeScale(0.5f);
+                }
+
+                if (Joystick.IsButtonPressed(0, JoystickUtils.GetButton(JoystickType.XBOX360, GameButtons.MainButtonRight)))
+                {
+                    FrameRate.SetTimeScale(1.0f);
+                }
+            }
+            else
             {
 
-                if (Keyboard.IsKeyPressed(Keyboard.Key.D))
+                if (status != Status.ShootL && status != Status.ShootR && status != Status.Attk1L && status != Status.Attk1R && status != Status.Attk2L && status != Status.Attk2R && status != Status.BlockL && status != Status.BlockR)
                 {
-                    CurrentPosition.X += speed * FrameRate.GetDeltaTime();
-                    SetStatus(Status.MovingR);
-                    LastDirectionPresed = 'D';
-                }
-                if (Keyboard.IsKeyPressed(Keyboard.Key.A))
-                {
-                    CurrentPosition.X -= speed * FrameRate.GetDeltaTime();
-                    SetStatus(Status.MovingL);
-                    LastDirectionPresed = 'A';
-                }
-                if (Keyboard.IsKeyPressed(Keyboard.Key.W) || Keyboard.IsKeyPressed(Keyboard.Key.Space))
-                {
-                    CurrentPosition.Y -= speed * FrameRate.GetDeltaTime();
-                    if (LastDirectionPresed == 'A')
-                    {
-                        SetStatus(Status.JumpL);
-                    }
-                    else if (LastDirectionPresed == 'D')
-                    {
-                        SetStatus(Status.JumpR);
-                    }
 
+                    if (Keyboard.IsKeyPressed(Keyboard.Key.D))
+                    {
+                        CurrentPosition.X += speed * FrameRate.GetDeltaTime();
+                        //SetStatus(Status.MovingR);
+                        status = Status.MovingR;
+                        LastDirectionPresed = 'D';
+                    }
+                    if (Keyboard.IsKeyPressed(Keyboard.Key.A))
+                    {
+                        CurrentPosition.X -= speed * FrameRate.GetDeltaTime();
+                        //SetStatus(Status.MovingL);
+                        status = Status.MovingL;
+                        LastDirectionPresed = 'A';
+                    }
+                    if (Keyboard.IsKeyPressed(Keyboard.Key.W) || Keyboard.IsKeyPressed(Keyboard.Key.Space))
+                    {
+                        CurrentPosition.Y -= speed * FrameRate.GetDeltaTime();
+                        if (LastDirectionPresed == 'A')
+                        {
+                            //SetStatus(Status.JumpL);
+                            status = Status.JumpL;
+                        }
+                        else if (LastDirectionPresed == 'D')
+                        {
+                            //SetStatus(Status.JumpR);
+                            status = Status.JumpR;
+                        }
+
+                    }
+                    if (Keyboard.IsKeyPressed(Keyboard.Key.S))
+                    {
+                        CurrentPosition.Y += speed * FrameRate.GetDeltaTime();
+                        if (LastDirectionPresed == 'A')
+                        {
+                            //SetStatus(Status.RollL);
+                            status = Status.RollL;
+                        }
+                        else if (LastDirectionPresed == 'D')
+                        {
+                            //SetStatus(Status.RollR);
+                            status = Status.RollR;
+                        }
+                    }
+                    bool IsMovingHorizontally = !Keyboard.IsKeyPressed(Keyboard.Key.A) && !Keyboard.IsKeyPressed(Keyboard.Key.D);
+                    bool IsMovingVertically = !Keyboard.IsKeyPressed(Keyboard.Key.W) && !Keyboard.IsKeyPressed(Keyboard.Key.S);
+                    bool IsInCombat = !Keyboard.IsKeyPressed(Keyboard.Key.K) && !Keyboard.IsKeyPressed(Keyboard.Key.J) && !Keyboard.IsKeyPressed(Keyboard.Key.L);
+                    if (IsMovingHorizontally && IsMovingVertically && IsInCombat)
+                    {
+                        if (LastDirectionPresed == 'A')
+                        {
+                            //SetStatus(Status.IdleL);
+                            status = Status.IdleL;
+                        }
+                        else if (LastDirectionPresed == 'D')
+                        {
+                            //SetStatus(Status.IdleR);
+                            status = Status.IdleR;
+                        }
+                    }
+                    Vector2f cameracenter = CurrentPosition;
+                    cameracenter.X += sprite.Scale.X / 2.0f;
+                    cameracenter.Y += sprite.Scale.Y / 2.0f;
+                    Camera.GetInstance().UpdateCamera(cameracenter);
                 }
-                if (Keyboard.IsKeyPressed(Keyboard.Key.S))
-                {
-                    CurrentPosition.Y += speed * FrameRate.GetDeltaTime();
-                    if (LastDirectionPresed == 'A')
-                    {
-                        SetStatus(Status.RollL);
-                    }
-                    else if (LastDirectionPresed == 'D')
-                    {
-                        SetStatus(Status.RollR);
-                    }
-                }
-                bool IsMovingHorizontally = !Keyboard.IsKeyPressed(Keyboard.Key.A) && !Keyboard.IsKeyPressed(Keyboard.Key.D);
-                bool IsMovingVertically = !Keyboard.IsKeyPressed(Keyboard.Key.W) && !Keyboard.IsKeyPressed(Keyboard.Key.S);
-                bool IsInCombat = !Keyboard.IsKeyPressed(Keyboard.Key.K) && !Keyboard.IsKeyPressed(Keyboard.Key.J) && !Keyboard.IsKeyPressed(Keyboard.Key.L);
-                if (IsMovingHorizontally && IsMovingVertically && IsInCombat)
-                {
-                    if (LastDirectionPresed == 'A')
-                    {
-                        SetStatus(Status.IdleL);
-                    }
-                    else if (LastDirectionPresed == 'D')
-                    {
-                        SetStatus(Status.IdleR);
-                    }
-                }
-                CurrentPosition.X += (texture.Size.X * sprite.Scale.X) / 2.0f;
-                CurrentPosition.Y += (texture.Size.Y * sprite.Scale.Y) / 2.0f;
-                Camera.GetInstance().UpdateCamera(CurrentPosition);
             }
 
         }
@@ -769,11 +806,12 @@ namespace TMTD
         }
         private void Shoot()
         {
-            if (Keyboard.IsKeyPressed(Keyboard.Key.J) && fireDelay >= RateOfFire)
+            if (Keyboard.IsKeyPressed(Keyboard.Key.J))
             {
                 if (LastDirectionPresed == 'D')
                 {
-                    SetStatus(Status.ShootR);
+                    //SetStatus(Status.ShootR);
+                    status = Status.ShootR;
                     Vector2f spawnposition = CurrentPosition;
                     spawnposition.X += (texture.Size.X * sprite.Scale.X) / 2.0f;
                     spawnposition.Y += (texture.Size.Y * sprite.Scale.Y) / 2.0f;
@@ -782,7 +820,8 @@ namespace TMTD
                 }
                 else if (LastDirectionPresed == 'A')
                 {
-                    SetStatus(Status.ShootL);
+                    //SetStatus(Status.ShootL);
+                    status = Status.ShootL;
                     Vector2f spawnposition = CurrentPosition;
                     spawnposition.X += (texture.Size.X * sprite.Scale.X) / 2.0f;
                     spawnposition.Y += (texture.Size.Y * sprite.Scale.Y) / 2.0f;
@@ -790,26 +829,12 @@ namespace TMTD
                     fireDelay = 0.0f;
                 }
             }
-            for (int i = 0; i < bullets.Count; i++)
-            {
-                bullets[i].Update();
-            }
         }
         private void DeletOldBullets()
         {
-            List<int> indextoDelet = new List<int>();
             for (int i = 0; i < bullets.Count; i++)
             {
-                //bullets[i].Update();
-                //if (bullets[i].GetPosition().X > Game().X)
-                //{
-                //    indextoDelet.Add(i);
-                //}
-                //for (int i = indextoDelet.Count - 1; i >= 0; i++)
-                //{
-                //    bullets[i].Dispose();
-                //    bullets.RemoveAt(i);
-                //}
+                bullets[i].Update();
             }
         }
         public void HealPlayer()
@@ -840,7 +865,7 @@ namespace TMTD
         {
             return location;
         }
-        public Status GetStatus() 
+        public Status GetStatus()
         {
             return status;
         }

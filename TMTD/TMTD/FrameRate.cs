@@ -11,11 +11,17 @@ namespace TMTD
         private static Time currentTime;
         private static float Fps;
         private static float deltaTime;
+        private static float timeScale;
         public static void InitFrameRateSystem() 
         {
             clock = new Clock();
             previousTime = clock.ElapsedTime;
             
+        }
+        public static void SetTimeScale(float newTimeScale) 
+        {
+            timeScale = newTimeScale;
+            Console.WriteLine("Current Time Scale: " + timeScale);
         }
         public static void OnFrameEnd() 
         {
@@ -31,7 +37,7 @@ namespace TMTD
         }
         public static float GetDeltaTime() 
         {
-            return deltaTime;
+            return deltaTime * timeScale;
         }
     }
 }
