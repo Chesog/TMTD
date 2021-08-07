@@ -14,8 +14,8 @@ namespace TMTD
         private Text title;
         public Title(string text, Vector2f position)
         {
-            Font arial = new Font("Fonts" + Path.DirectorySeparatorChar + "arial.ttf");
-            title = new Text(text, arial);
+            Font cayed = new Font("Fonts" + Path.DirectorySeparatorChar + "Cayed Demo Version.ttf");
+            title = new Text(text, cayed);
             title.Position = position;
         }
 

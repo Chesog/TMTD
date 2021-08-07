@@ -1,6 +1,6 @@
 ﻿using SFML.Graphics;
 using SFML.System;
-public enum Locations {Village , Castle , Forest , Home , Shop , Error }
+public enum Locations {Village , Castle , Forest , Home , Shop , Menu ,Error }
 
 namespace TMTD
 {
@@ -18,6 +18,13 @@ namespace TMTD
             this.name = name;
             sprite.Scale = bacgrowndScale;
         }
+        public Background(string path, Vector2f scale) 
+        {
+            texture = new Texture(path);
+            sprite = new Sprite(texture);
+            bacgrowndScale = scale;
+            sprite.Scale = bacgrowndScale;
+        }
         public Sprite GetSprite()
         {
             return sprite;
@@ -25,6 +32,10 @@ namespace TMTD
         public Locations GetLocationName()
         {
             return name;
+        }
+        public void Draw(RenderWindow window) 
+        {
+            window.Draw(sprite);
         }
     }
 }

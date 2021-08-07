@@ -14,7 +14,6 @@ namespace TMTD
             while (game.UpdateGameWindow())
             {
                 game.UpdateGame();
-                CollitionManager.Getinstance().CheckColitions();
                 game.CheckGarbage();
                 game.DrawGame();
                 Joystick.Update();

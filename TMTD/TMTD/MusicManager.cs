@@ -11,7 +11,7 @@ namespace TMTD
     class MusicManager
     {
         private readonly string defaultMusic = "Sound" + Path.DirectorySeparatorChar + "Argus no Senshi Cavern MIX.flac";
-        private readonly string introMusic = "Sound" + Path.DirectorySeparatorChar + "mixkit-woodfire-by-the-lake-128.wav";
+        private readonly string introMusic = "Sound" + Path.DirectorySeparatorChar + "Battle_thm01(16bit - loop).flac";
         private static MusicManager instance;
         public static MusicManager GetInstance() 
         {
@@ -53,6 +53,11 @@ namespace TMTD
         public void Play()
         {
             music[CurrentSong].Play();
+        }
+        public void SetIntroMusic() 
+        {
+            music[CurrentSong].Stop();
+            music[1].Play();
         }
         public void Skip() 
         {

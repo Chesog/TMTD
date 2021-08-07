@@ -30,7 +30,7 @@ namespace TMTD
         {
 
         }
-        public Player(string Name, int MaxLife, int MaxMana, int MinAttk, int MaxAttk, Locations spawnpoint, int SheetColums, int SheetRows) : base("Player" + Path.DirectorySeparatorChar + "Sprites" + Path.DirectorySeparatorChar + "PlayerAnimations" + Path.DirectorySeparatorChar + "PlayerMovement3.png", new Vector2f(0.0f, 0.0f), SheetColums, SheetRows)
+        public Player(string Name, int MaxLife, int MaxMana, int MinAttk, int MaxAttk, Locations spawnpoint, int SheetColums, int SheetRows) : base("Player" + Path.DirectorySeparatorChar + "Sprites" + Path.DirectorySeparatorChar + "PlayerAnimations" + Path.DirectorySeparatorChar + "PlayerMovement3.png", new Vector2f(-10.0f, 0.0f), SheetColums, SheetRows)
         {
 
             this.Name = Name;
@@ -314,7 +314,7 @@ namespace TMTD
             UpdateAnimation();
             Atakk();
             Shoot();
-            DeletOldBullets();
+            CheckGarbage();
             Gravity();
             base.Update();
 
@@ -334,8 +334,11 @@ namespace TMTD
         {
 
             status = changestatus;
-            CurrentFrame = 0;
-            FrameTimer.Restart();
+            if (CurrentFrame >= animations[(int)changestatus].Count - 1)
+            {
+                CurrentFrame = 0;
+                FrameTimer.Restart();
+            }
         }
         public void UpdateAnimation()
         {
@@ -374,7 +377,7 @@ namespace TMTD
                         if (CurrentFrame >= animations[(int)Status.MovingR].Count - 1)
                         {
                             CurrentFrame = 0;
-                            status = Status.IdleR;
+                            SetStatus(Status.IdleR);
                         }
                         FrameTimer.Restart();
                     }
@@ -388,7 +391,7 @@ namespace TMTD
                         if (CurrentFrame >= animations[(int)Status.MovingL].Count - 1)
                         {
                             CurrentFrame = 0;
-                            status = Status.IdleL;
+                            SetStatus(Status.IdleL);
                         }
                         FrameTimer.Restart();
                     }
@@ -402,7 +405,7 @@ namespace TMTD
                         if (CurrentFrame >= animations[(int)Status.Attk1R].Count - 1)
                         {
                             CurrentFrame = 0;
-                            status = Status.Attk2R;
+                            SetStatus(Status.Attk2R);
                         }
                         FrameTimer.Restart();
                     }
@@ -416,7 +419,7 @@ namespace TMTD
                         if (CurrentFrame >= animations[(int)Status.Attk1L].Count - 1)
                         {
                             CurrentFrame = 0;
-                            status = Status.Attk2L;
+                            SetStatus(Status.Attk2L);
                         }
                         FrameTimer.Restart();
                     }
@@ -430,7 +433,7 @@ namespace TMTD
                         if (CurrentFrame >= animations[(int)Status.Attk2R].Count - 1)
                         {
                             CurrentFrame = 0;
-                            status = Status.IdleR;
+                            SetStatus(Status.IdleR);
                         }
                         FrameTimer.Restart();
                     }
@@ -444,7 +447,7 @@ namespace TMTD
                         if (CurrentFrame >= animations[(int)Status.Attk2L].Count - 1)
                         {
                             CurrentFrame = 0;
-                            status = Status.IdleL;
+                            SetStatus(Status.IdleL);
                         }
                         FrameTimer.Restart();
                     }
@@ -458,7 +461,7 @@ namespace TMTD
                         if (CurrentFrame >= animations[(int)Status.ShootR].Count - 1)
                         {
                             CurrentFrame = 0;
-                            status = Status.IdleR;
+                            SetStatus(Status.IdleR);
                         }
                         FrameTimer.Restart();
                     }
@@ -472,7 +475,7 @@ namespace TMTD
                         if (CurrentFrame >= animations[(int)Status.ShootL].Count - 1)
                         {
                             CurrentFrame = 0;
-                            status = Status.IdleL;
+                            SetStatus(Status.IdleL);
                         }
                         FrameTimer.Restart();
                     }
@@ -486,7 +489,7 @@ namespace TMTD
                         if (CurrentFrame >= animations[(int)Status.JumpR].Count - 1)
                         {
                             CurrentFrame = 0;
-                            status = Status.IdleR;
+                            SetStatus(Status.IdleR);
                         }
                         FrameTimer.Restart();
                     }
@@ -500,7 +503,7 @@ namespace TMTD
                         if (CurrentFrame >= animations[(int)Status.JumpL].Count - 1)
                         {
                             CurrentFrame = 0;
-                            status = Status.IdleL;
+                            SetStatus(Status.IdleL);
                         }
                         FrameTimer.Restart();
                     }
@@ -514,7 +517,7 @@ namespace TMTD
                         if (CurrentFrame >= animations[(int)Status.HitR].Count - 1)
                         {
                             CurrentFrame = 0;
-                            status = Status.IdleR;
+                            SetStatus(Status.IdleR);
                         }
                         FrameTimer.Restart();
                     }
@@ -528,7 +531,7 @@ namespace TMTD
                         if (CurrentFrame >= animations[(int)Status.HitL].Count - 1)
                         {
                             CurrentFrame = 0;
-                            status = Status.IdleL;
+                            SetStatus(Status.IdleL);
                         }
                         FrameTimer.Restart();
                     }
@@ -594,7 +597,7 @@ namespace TMTD
                         if (CurrentFrame >= animations[(int)Status.BlockedR].Count - 1)
                         {
                             CurrentFrame = 0;
-                            status = Status.BlockR;
+                            SetStatus(Status.BlockR);
                         }
                         FrameTimer.Restart();
                     }
@@ -608,7 +611,7 @@ namespace TMTD
                         if (CurrentFrame >= animations[(int)Status.BlockedL].Count - 1)
                         {
                             CurrentFrame = 0;
-                            status = Status.BlockL;
+                            SetStatus(Status.BlockL);
                         }
                         FrameTimer.Restart();
                     }
@@ -622,7 +625,7 @@ namespace TMTD
                         if (CurrentFrame >= animations[(int)Status.RollR].Count - 1)
                         {
                             CurrentFrame = 0;
-                            status = Status.IdleR;
+                            SetStatus(Status.IdleR);
                         }
                         FrameTimer.Restart();
                     }
@@ -636,7 +639,7 @@ namespace TMTD
                         if (CurrentFrame >= animations[(int)Status.RollL].Count - 1)
                         {
                             CurrentFrame = 0;
-                            status = Status.IdleL;
+                            SetStatus(Status.IdleL);
                         }
                         FrameTimer.Restart();
                     }
@@ -670,7 +673,7 @@ namespace TMTD
                     frameRect.Top = animations[(int)Status.HangL][CurrentFrame].Y * frameRect.Height;
                     break;
                 default:
-                    status = Status.IdleR;
+                    SetStatus(Status.IdleR);
                     frameRect.Left = animations[(int)Status.IdleR][CurrentFrame].X * frameRect.Width;
                     frameRect.Top = animations[(int)Status.IdleR][CurrentFrame].Y * frameRect.Height;
                     break;
@@ -681,13 +684,13 @@ namespace TMTD
         {
             if (Joystick.IsConnected(0))
             {
-                if (JoystickUtils.GetAxis(0, Joystick.Axis.U) != 0)
+                if (JoystickUtils.GetAxis(0, Joystick.Axis.X) != 0)
                 {
-                    CurrentPosition.X += JoystickUtils.GetAxis(0, Joystick.Axis.U) * speed * FrameRate.GetDeltaTime();
+                    CurrentPosition.X += JoystickUtils.GetAxis(0, Joystick.Axis.X) * speed * FrameRate.GetDeltaTime();
                 }
-                if (JoystickUtils.GetAxis(0, Joystick.Axis.V) != 0)
+                if (JoystickUtils.GetAxis(0, Joystick.Axis.Y) != 0)
                 {
-                    CurrentPosition.Y += JoystickUtils.GetAxis(0, Joystick.Axis.V) * speed * FrameRate.GetDeltaTime();
+                    CurrentPosition.Y += JoystickUtils.GetAxis(0, Joystick.Axis.Y) * speed * FrameRate.GetDeltaTime();
                 }
 
                 if (Joystick.IsButtonPressed(0, JoystickUtils.GetButton(JoystickType.XBOX360, GameButtons.MainButtonDown)))
@@ -699,25 +702,28 @@ namespace TMTD
                 {
                     FrameRate.SetTimeScale(1.0f);
                 }
+                Vector2f cameracenter = CurrentPosition;
+                cameracenter.X += sprite.Scale.X / 2.0f;
+                cameracenter.Y += sprite.Scale.Y / 2.0f;
+                Camera.GetInstance().UpdateCamera(cameracenter);
+                AllBackground.GetInstance().UpdateBackgroundPosition(cameracenter);
             }
             else
             {
-
+                
                 if (status != Status.ShootL && status != Status.ShootR && status != Status.Attk1L && status != Status.Attk1R && status != Status.Attk2L && status != Status.Attk2R && status != Status.BlockL && status != Status.BlockR)
                 {
 
                     if (Keyboard.IsKeyPressed(Keyboard.Key.D))
                     {
                         CurrentPosition.X += speed * FrameRate.GetDeltaTime();
-                        //SetStatus(Status.MovingR);
-                        status = Status.MovingR;
+                        SetStatus(Status.MovingR);
                         LastDirectionPresed = 'D';
                     }
                     if (Keyboard.IsKeyPressed(Keyboard.Key.A))
                     {
                         CurrentPosition.X -= speed * FrameRate.GetDeltaTime();
-                        //SetStatus(Status.MovingL);
-                        status = Status.MovingL;
+                        SetStatus(Status.MovingL);
                         LastDirectionPresed = 'A';
                     }
                     if (Keyboard.IsKeyPressed(Keyboard.Key.W) || Keyboard.IsKeyPressed(Keyboard.Key.Space))
@@ -725,13 +731,11 @@ namespace TMTD
                         CurrentPosition.Y -= speed * FrameRate.GetDeltaTime();
                         if (LastDirectionPresed == 'A')
                         {
-                            //SetStatus(Status.JumpL);
-                            status = Status.JumpL;
+                            SetStatus(Status.JumpL);
                         }
                         else if (LastDirectionPresed == 'D')
                         {
-                            //SetStatus(Status.JumpR);
-                            status = Status.JumpR;
+                            SetStatus(Status.JumpR);
                         }
 
                     }
@@ -740,13 +744,11 @@ namespace TMTD
                         CurrentPosition.Y += speed * FrameRate.GetDeltaTime();
                         if (LastDirectionPresed == 'A')
                         {
-                            //SetStatus(Status.RollL);
-                            status = Status.RollL;
+                            SetStatus(Status.RollL);
                         }
                         else if (LastDirectionPresed == 'D')
                         {
-                            //SetStatus(Status.RollR);
-                            status = Status.RollR;
+                            SetStatus(Status.RollR);
                         }
                     }
                     bool IsMovingHorizontally = !Keyboard.IsKeyPressed(Keyboard.Key.A) && !Keyboard.IsKeyPressed(Keyboard.Key.D);
@@ -756,13 +758,11 @@ namespace TMTD
                     {
                         if (LastDirectionPresed == 'A')
                         {
-                            //SetStatus(Status.IdleL);
-                            status = Status.IdleL;
+                            SetStatus(Status.IdleL);
                         }
                         else if (LastDirectionPresed == 'D')
                         {
-                            //SetStatus(Status.IdleR);
-                            status = Status.IdleR;
+                            SetStatus(Status.IdleR);
                         }
                     }
                     Vector2f cameracenter = CurrentPosition;
@@ -810,8 +810,7 @@ namespace TMTD
             {
                 if (LastDirectionPresed == 'D')
                 {
-                    //SetStatus(Status.ShootR);
-                    status = Status.ShootR;
+                    SetStatus(Status.ShootR);
                     Vector2f spawnposition = CurrentPosition;
                     spawnposition.X += (texture.Size.X * sprite.Scale.X) / 2.0f;
                     spawnposition.Y += (texture.Size.Y * sprite.Scale.Y) / 2.0f;
@@ -820,8 +819,7 @@ namespace TMTD
                 }
                 else if (LastDirectionPresed == 'A')
                 {
-                    //SetStatus(Status.ShootL);
-                    status = Status.ShootL;
+                    SetStatus(Status.ShootL);
                     Vector2f spawnposition = CurrentPosition;
                     spawnposition.X += (texture.Size.X * sprite.Scale.X) / 2.0f;
                     spawnposition.Y += (texture.Size.Y * sprite.Scale.Y) / 2.0f;
@@ -830,13 +828,7 @@ namespace TMTD
                 }
             }
         }
-        private void DeletOldBullets()
-        {
-            for (int i = 0; i < bullets.Count; i++)
-            {
-                bullets[i].Update();
-            }
-        }
+ 
         public void HealPlayer()
         {
             Life = MaxLife;
@@ -872,22 +864,27 @@ namespace TMTD
         public void GoToShop()
         {
             location = Locations.Shop;
+            AllBackground.GetInstance().UpdateBackground(location);
         }
         public void GoToVillage()
         {
             location = Locations.Village;
+            AllBackground.GetInstance().UpdateBackground(location);
         }
         public void GoToForest()
         {
             location = Locations.Forest;
+            AllBackground.GetInstance().UpdateBackground(location);
         }
         public void GoToHome()
         {
             location = Locations.Home;
+            AllBackground.GetInstance().UpdateBackground(location);
         }
         public void GoToCastle()
         {
             location = Locations.Castle;
+            AllBackground.GetInstance().UpdateBackground(location);
         }
         public void RestPlayer() { }
 
@@ -895,38 +892,6 @@ namespace TMTD
         {
             return sprite.GetGlobalBounds();
         }
-
-        public void OnColitionStay(IColicionable other)
-        {
-            if (other is Wall)
-            {
-                if (Keyboard.IsKeyPressed(Keyboard.Key.D))
-                {
-                    CurrentPosition.X -= speed * FrameRate.GetDeltaTime();
-                }
-                if (Keyboard.IsKeyPressed(Keyboard.Key.A))
-                {
-                    CurrentPosition.X += speed * FrameRate.GetDeltaTime();
-                }
-                if (Keyboard.IsKeyPressed(Keyboard.Key.W) || Keyboard.IsKeyPressed(Keyboard.Key.Space))
-                {
-                    CurrentPosition.Y += speed * FrameRate.GetDeltaTime();
-                }
-                if (Keyboard.IsKeyPressed(Keyboard.Key.S))
-                {
-                    CurrentPosition.Y -= speed * FrameRate.GetDeltaTime();
-                }
-                GravitySpeed = 0;
-            }
-            if (other is InvisibleWall)
-            {
-                GoToForest();
-                CurrentPosition.X = 0;
-                CurrentPosition.Y = 0;
-                MusicManager.GetInstance().Skip();
-            }
-        }
-
         public override void CheckGarbage()
         {
             List<int> indexToDelete = new List<int>();
@@ -952,6 +917,36 @@ namespace TMTD
         {
             CollitionManager.Getinstance().removeFromColitionManager(this);
             base.DisposeNow();
+        }
+        public void OnColitionStay(IColicionable other)
+        {
+            if (other is Wall || other is CollisionableTile)
+            {
+                if (Keyboard.IsKeyPressed(Keyboard.Key.D))
+                {
+                    CurrentPosition.X -= speed * FrameRate.GetDeltaTime();
+                }
+                if (Keyboard.IsKeyPressed(Keyboard.Key.A))
+                {
+                    CurrentPosition.X += speed * FrameRate.GetDeltaTime();
+                }
+                if (Keyboard.IsKeyPressed(Keyboard.Key.W) || Keyboard.IsKeyPressed(Keyboard.Key.Space))
+                {
+                    CurrentPosition.Y += speed * FrameRate.GetDeltaTime();
+                }
+                if (Keyboard.IsKeyPressed(Keyboard.Key.S))
+                {
+                    CurrentPosition.Y -= speed * FrameRate.GetDeltaTime();
+                }
+                GravitySpeed = 0;
+            }
+            if (other is InvisibleWall)
+            {
+                GoToForest();
+                CurrentPosition.X = 0;
+                CurrentPosition.Y = 0;
+                MusicManager.GetInstance().SetIntroMusic();
+            }
         }
 
         public void OnColitionEnter(IColicionable other)

@@ -7,19 +7,43 @@ namespace TMTD
 {
     class AllBackground 
     {
+        private static AllBackground instance;
+        public static AllBackground GetInstance()
+        {
+            if (instance == null)
+            {
+                instance = new AllBackground();
+            }
+            return instance;
+        }
         private Locations CurrenLocation;
         private List<Background> loadedBackground;
+        private RenderWindow window;
+        private Vector2f currentPosition;
+        private View view;
 
-        public AllBackground(Player player) 
+        private AllBackground() 
         {
-            CurrenLocation = player.GetLocations();
             loadedBackground = new List<Background>();
             loadedBackground.Add(new Background("Background/Sprites/Home/Home.jpg", new Vector2f (2.2f, 2.2f) ,Locations.Home));
             loadedBackground.Add(new Background("Background/Sprites/Forest/Bosque.jpg", new Vector2f(2.2f, 2.2f), Locations.Forest));
+            loadedBackground.Add(new Background("Background/Sprites/Forest/Bosque.jpg", new Vector2f(2.2f, 2.2f), Locations.Castle));
+
         }
-        public void UpdateBackground(Player player)
+        public void UpdateBackground(Locations locations)
         {
-            CurrenLocation = player.GetLocations();
+            CurrenLocation = locations;
+        }
+        public void InitBackground(RenderWindow window) 
+        {
+            this.window = window;
+            view = window.GetView();
+            currentPosition = view.Center;
+        }
+        public void UpdateBackgroundPosition(Vector2f newCenter) 
+        {
+            view.Center = newCenter;
+            window.SetView(view);
         }
         public void DrawBackground(RenderWindow window)
         {
@@ -31,23 +55,7 @@ namespace TMTD
                 }
             }
             
-           switch (CurrenLocation)
-           {
-               case Locations.Village:
-                   break;
-               case Locations.Castle:
-                   break;
-               case Locations.Forest:
-                    MusicManager.GetInstance().Skip();
-                   break;
-               case Locations.Home:
-                   break;
-               case Locations.Shop:
-                   break;
-               default:
-                   Console.WriteLine("Error");
-                   break;
-           }
+          
         }
        
     }

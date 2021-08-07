@@ -11,17 +11,14 @@ namespace TMTD
         private Wall wall;
         private AllBackground background;
         private InvisibleWall invisibleWall;
-        private Title title;
         private TileMap collisiones;
         public Gameplay() 
         {
             player = new Player("Max",1000,100,0,100, Locations.Home ,10,18);
-            wall = new Wall();
-            title = new Title("Hello Word", new Vector2f(100.0f , 100.0f));
-            background = new AllBackground(player);
+            AllBackground.GetInstance();
             
-            invisibleWall = new InvisibleWall(new Vector2f(1000.0f,900.0f) , new Vector2f(200.0f,200.0f));
-            collisiones = new TileMap("TileMap" + Path.DirectorySeparatorChar + "Tilemap.png", "TileMap" + Path.DirectorySeparatorChar + "TileMapCollisionable.csv", 32, 32, 14, new Vector2f(2.0f, 2.0f), TileMapType.Collisionable);
+            invisibleWall = new InvisibleWall(new Vector2f(500.0f,500.0f) , new Vector2f(200.0f,200.0f));
+            collisiones = new TileMap("TileMap" + Path.DirectorySeparatorChar + "TilesExamples.png", "TileMap" + Path.DirectorySeparatorChar + "1level.csv", 16, 16, 26, new Vector2f(4.0f, 4.0f), TileMapType.Collisionable);
         }
         public void UpdateGameplay() 
         {
@@ -29,13 +26,13 @@ namespace TMTD
             {
                 player.Update();
             }
-            
-            background.UpdateBackground(player);
+
+            AllBackground.GetInstance().UpdateBackground(player.GetLocations());
             
         }
         public void DrawGameplay(RenderWindow window) 
         {
-            background.DrawBackground(window);
+            AllBackground.GetInstance().DrawBackground(window);
             if (player != null)
             {
                 player.Draw(window);
@@ -44,11 +41,10 @@ namespace TMTD
             {
                 wall.Draw(window);
             }
-            if (title != null)
+            if (collisiones != null)
             {
-                title.Draw(window);
+                collisiones.Draw(window);
             }
-            collisiones.Draw(window);
         }
         public void CheckGarbage() 
         {
@@ -68,6 +64,7 @@ namespace TMTD
                     wall = null;
                 }
             }
+
             
            
         }

@@ -12,6 +12,7 @@ namespace TMTD
     {
         public CollisionableTile(Texture texture, Vector2f position, Vector2f scale) : base(texture, position, scale)
         {
+            CollitionManager.Getinstance().addToColitionManeger(this);
         }
 
         public FloatRect GetBounds()

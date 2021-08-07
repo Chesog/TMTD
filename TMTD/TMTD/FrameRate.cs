@@ -16,6 +16,7 @@ namespace TMTD
         {
             clock = new Clock();
             previousTime = clock.ElapsedTime;
+            timeScale = 1.0f;
             
         }
         public static void SetTimeScale(float newTimeScale) 

@@ -32,6 +32,7 @@ namespace TMTD
             gameplay = new Gameplay();
             menu = new MainMenu();
             Camera.GetInstance().InitCamera(window);
+            AllBackground.GetInstance().InitBackground(window);
         }
         private void CloseWindow(object sender, EventArgs e)
         {
@@ -48,12 +49,14 @@ namespace TMTD
             if (menu.exitMenu)
             {
                 gameplay.UpdateGameplay();
-                windowSize = window.GetView().Size;
+                CollitionManager.Getinstance().CheckColitions();
+
             }
             else
             {
                 menu.Update();
             }
+                windowSize = window.GetView().Size;
         }
         public void DrawGame()
         {

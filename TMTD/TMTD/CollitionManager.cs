@@ -45,6 +45,10 @@ namespace TMTD
                 {
                     if (i != j)
                     {
+                        if (colicionables[i] is CollisionableTile && colicionables[j] is CollisionableTile)
+                        {
+                            continue;
+                        }
                         KeyValuePair<IColicionable, IColicionable> register = new KeyValuePair<IColicionable, IColicionable>(colicionables[i], colicionables[j]);
                         if (colicionables[i].GetBounds().Intersects(colicionables[j].GetBounds()))
                         {
