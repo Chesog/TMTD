@@ -12,13 +12,14 @@ namespace TMTD
         private AllBackground background;
         private InvisibleWall invisibleWall;
         private TileMap collisiones;
+
         public Gameplay() 
         {
             player = new Player("Max",1000,100,0,100, Locations.Home ,10,18);
             AllBackground.GetInstance();
             
-            invisibleWall = new InvisibleWall(new Vector2f(500.0f,500.0f) , new Vector2f(200.0f,200.0f));
-            collisiones = new TileMap("TileMap" + Path.DirectorySeparatorChar + "TilesExamples.png", "TileMap" + Path.DirectorySeparatorChar + "1level.csv", 16, 16, 26, new Vector2f(5.0f, 5.0f), TileMapType.Collisionable);
+            invisibleWall = new InvisibleWall(new Vector2f(7500.0f,700.0f) , new Vector2f(200.0f,200.0f));
+            collisiones = new TileMap("TileMap" + Path.DirectorySeparatorChar + "TilesExamples.png", "TileMap" + Path.DirectorySeparatorChar + "1level1.csv", 16, 16, 26, new Vector2f(4.0f, 4.0f), TileMapType.Collisionable);
         }
         public void UpdateGameplay() 
         {

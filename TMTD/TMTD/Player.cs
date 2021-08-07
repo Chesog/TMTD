@@ -24,9 +24,11 @@ namespace TMTD
         private Locations location;
         private float GravitySpeed;
         private Status status;
+        private Title title;
+        private bool win;
 
 
-        public Player(int SheetColums, int SheetRows) : base("Player" + Path.DirectorySeparatorChar + "Sprites" + Path.DirectorySeparatorChar + "PlayerAnimations" + Path.DirectorySeparatorChar + "PlayerMovement3.png", new Vector2f(0.0f, 0.0f), SheetColums, SheetRows)
+        public Player(int SheetColums, int SheetRows) : base("Player" + Path.DirectorySeparatorChar + "Sprites" + Path.DirectorySeparatorChar + "PlayerAnimations" + Path.DirectorySeparatorChar + "PlayerMovement3.png", new Vector2f(0.0f, 20.0f), SheetColums, SheetRows)
         {
 
         }
@@ -52,6 +54,8 @@ namespace TMTD
             GravitySpeed = 3.0f;
             FrameTimer = new Clock();
             animations = new List<List<Vector2i>>();
+            title = new Title("You Win !!!!", new Vector2f(100.0f, 100.0f));
+            win = false;
 
             #region IdleRight
             animations.Add(new List<Vector2i>());
@@ -329,6 +333,14 @@ namespace TMTD
                     bullets[i].Draw(window);
                 }
             }
+            if (win == true )
+            {
+                if (title != null)
+                {
+                    title.Draw(window);
+                }
+            }
+            
         }
         private void SetStatus(Status changestatus)
         {
@@ -776,7 +788,7 @@ namespace TMTD
         private void Gravity()
         {
             CurrentPosition.Y += GravitySpeed * FrameRate.GetDeltaTime();
-            GravitySpeed += 1.5f;
+            GravitySpeed += 3.0f;
         }
         private void Atakk()
         {
@@ -875,6 +887,7 @@ namespace TMTD
         {
             location = Locations.Forest;
             AllBackground.GetInstance().UpdateBackground(location);
+            win = true;
         }
         public void GoToHome()
         {
