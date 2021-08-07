@@ -33,7 +33,7 @@ namespace TMTD
         {
             if (colicionables.Contains(colicionable))
             {
-                colicionables.Add(colicionable);
+                colicionables.Remove(colicionable);
             }
             
         }

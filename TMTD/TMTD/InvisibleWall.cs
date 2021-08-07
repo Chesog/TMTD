@@ -12,11 +12,13 @@ namespace TMTD
     {
         private Vector2f position;
         private Vector2f Size;
+        public bool ToDelete;
         public InvisibleWall(Vector2f position, Vector2f size) 
         {
 
             this.position = position;
             this.Size = size;
+            ToDelete = false;
             CollitionManager.Getinstance().addToColitionManeger(this);
         }
 
@@ -27,7 +29,10 @@ namespace TMTD
 
         public void OnColitionEnter(IColicionable other)
         {
-           
+            if (other is Player)
+            {
+                ToDelete = true;
+            }
         }
 
         public void OnColitionExit(IColicionable other)
@@ -37,10 +42,11 @@ namespace TMTD
 
         public void OnColitionStay(IColicionable other)
         {
-            if (other is Player)
-            {
 
-            }
+        }
+        public void RemoveFromColitionManager() 
+        {
+            CollitionManager.Getinstance().removeFromColitionManager(this);
         }
     }
 }

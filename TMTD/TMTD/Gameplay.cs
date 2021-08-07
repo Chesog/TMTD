@@ -18,7 +18,7 @@ namespace TMTD
             AllBackground.GetInstance();
             
             invisibleWall = new InvisibleWall(new Vector2f(500.0f,500.0f) , new Vector2f(200.0f,200.0f));
-            collisiones = new TileMap("TileMap" + Path.DirectorySeparatorChar + "TilesExamples.png", "TileMap" + Path.DirectorySeparatorChar + "1level.csv", 16, 16, 26, new Vector2f(4.0f, 4.0f), TileMapType.Collisionable);
+            collisiones = new TileMap("TileMap" + Path.DirectorySeparatorChar + "TilesExamples.png", "TileMap" + Path.DirectorySeparatorChar + "1level.csv", 16, 16, 26, new Vector2f(5.0f, 5.0f), TileMapType.Collisionable);
         }
         public void UpdateGameplay() 
         {
@@ -64,9 +64,14 @@ namespace TMTD
                     wall = null;
                 }
             }
-
-            
-           
+            if (invisibleWall != null)
+            {
+                if (invisibleWall.ToDelete == true)
+                {
+                    invisibleWall.RemoveFromColitionManager();
+                    invisibleWall = null;
+                }
+            }         
         }
     }
 }

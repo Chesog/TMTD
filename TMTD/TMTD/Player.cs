@@ -710,7 +710,7 @@ namespace TMTD
             }
             else
             {
-                
+
                 if (status != Status.ShootL && status != Status.ShootR && status != Status.Attk1L && status != Status.Attk1R && status != Status.Attk2L && status != Status.Attk2R && status != Status.BlockL && status != Status.BlockR)
                 {
 
@@ -775,8 +775,8 @@ namespace TMTD
         }
         private void Gravity()
         {
-            //CurrentPosition.Y += GravitySpeed * FrameRate.GetDeltaTime();
-            //GravitySpeed += 1.5f;
+            CurrentPosition.Y += GravitySpeed * FrameRate.GetDeltaTime();
+            GravitySpeed += 1.5f;
         }
         private void Atakk()
         {
@@ -828,7 +828,7 @@ namespace TMTD
                 }
             }
         }
- 
+
         public void HealPlayer()
         {
             Life = MaxLife;
@@ -922,23 +922,27 @@ namespace TMTD
         {
             if (other is Wall || other is CollisionableTile)
             {
-                if (Keyboard.IsKeyPressed(Keyboard.Key.D))
+                if (status != Status.ShootL && status != Status.ShootR && status != Status.Attk1L && status != Status.Attk1R && status != Status.Attk2L && status != Status.Attk2R && status != Status.BlockL && status != Status.BlockR)
                 {
-                    CurrentPosition.X -= speed * FrameRate.GetDeltaTime();
+
+                    //if (Keyboard.IsKeyPressed(Keyboard.Key.D))
+                    //{
+                    //    CurrentPosition.X -= speed * FrameRate.GetDeltaTime();
+                    //}
+                    //if (Keyboard.IsKeyPressed(Keyboard.Key.A))
+                    //{
+                    //    CurrentPosition.X += speed * FrameRate.GetDeltaTime();
+                    //}
+                    if (Keyboard.IsKeyPressed(Keyboard.Key.W) || Keyboard.IsKeyPressed(Keyboard.Key.Space))
+                    {
+                        CurrentPosition.Y += speed * FrameRate.GetDeltaTime();
+                    }
+                    if (Keyboard.IsKeyPressed(Keyboard.Key.S))
+                    {
+                        CurrentPosition.Y -= speed * FrameRate.GetDeltaTime();
+                    }
                 }
-                if (Keyboard.IsKeyPressed(Keyboard.Key.A))
-                {
-                    CurrentPosition.X += speed * FrameRate.GetDeltaTime();
-                }
-                if (Keyboard.IsKeyPressed(Keyboard.Key.W) || Keyboard.IsKeyPressed(Keyboard.Key.Space))
-                {
-                    CurrentPosition.Y += speed * FrameRate.GetDeltaTime();
-                }
-                if (Keyboard.IsKeyPressed(Keyboard.Key.S))
-                {
-                    CurrentPosition.Y -= speed * FrameRate.GetDeltaTime();
-                }
-                GravitySpeed = 0;
+                    GravitySpeed = 0;
             }
             if (other is InvisibleWall)
             {
